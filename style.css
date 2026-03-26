@@ -1,19 +1,39 @@
 /*--------------------------------------------------------------------
-TOP NAVBAR
+APPLE MINIMAL — VARIABLES
 --------------------------------------------------------------------*/
 
-:root { --nav-h: 48px; }
+:root {
+  --nav-h:       58px;
+  --blue:        #007aff;
+  --blue-light:  #e8f1ff;
+  --green:       #34c759;
+  --red:         #ff3b30;
+  --label:       #1d1d1f;
+  --secondary:   #6e6e73;
+  --tertiary:    #aeaeb2;
+  --separator:   #e5e5ea;
+  --bg:          rgba(255,255,255,0.92);
+  --card-radius: 14px;
+  --shadow:      0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg:   0 4px 24px rgba(0,0,0,0.11);
+}
+
+/*--------------------------------------------------------------------
+TOP NAVBAR  — frosted glass
+--------------------------------------------------------------------*/
 
 #topnav {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--nav-h);
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--separator);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  padding: 0 20px;
   z-index: 100;
 }
 
@@ -24,103 +44,98 @@ TOP NAVBAR
 }
 
 #nav-logo {
-  height: 32px;
-  width: auto;
+  height: 44px;
+  width: 44px;
+  object-fit: cover;
+  border-radius: 10px;
   display: block;
 }
 
 #nav-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
-  letter-spacing: -0.3px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--label);
+  letter-spacing: -0.4px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
 }
 
 #nav-links {
   display: flex;
-  gap: 4px;
+  gap: 2px;
 }
 
 .nav-btn {
   background: none;
   border: none;
-  padding: 6px 14px;
-  font-size: 13px;
+  padding: 7px 14px;
+  font-size: 14px;
   font-weight: 500;
-  color: #555;
-  border-radius: 6px;
+  color: var(--secondary);
+  border-radius: 8px;
   cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   transition: background 0.15s, color 0.15s;
 }
 
-.nav-btn:hover {
-  background: #f0f4ff;
-  color: #1976d2;
-}
+.nav-btn:hover  { background: var(--blue-light); color: var(--blue); }
+.nav-btn.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
 
-.nav-btn.active {
-  background: #e8f0fe;
-  color: #1565c0;
-  font-weight: 600;
-}
-
-/* Dropdown panel below navbar */
+/* Side panel */
 #nav-panel {
   position: fixed;
   top: var(--nav-h);
   right: 0;
-  width: 360px;
+  width: 340px;
   max-height: calc(100vh - var(--nav-h));
-  background: white;
-  box-shadow: -2px 4px 16px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid var(--separator);
+  box-shadow: -4px 0 20px rgba(0,0,0,0.07);
   z-index: 99;
-  display: flex;
   flex-direction: column;
-  border-top: 2px solid #e8f0fe;
+  display: none;
 }
 
 #nav-panel-inner {
-  padding: 20px 22px;
+  padding: 24px 22px 24px;
   overflow-y: auto;
   position: relative;
 }
 
 #nav-panel-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  background: none;
+  top: 16px; right: 16px;
+  background: var(--separator);
   border: none;
-  font-size: 16px;
-  color: #999;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  font-size: 13px;
+  color: var(--secondary);
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
   line-height: 1;
+  transition: background 0.15s;
 }
-
-#nav-panel-close:hover { background: #f5f5f5; color: #333; }
+#nav-panel-close:hover { background: #d0d0d5; color: var(--label); }
 
 .nav-panel-content h3 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 14px;
+  color: var(--label);
+  margin: 0 0 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  letter-spacing: -0.4px;
 }
-
 .nav-panel-content p,
 .nav-panel-content li {
-  font-size: 13px;
-  color: #555;
-  line-height: 1.7;
+  font-size: 14px;
+  color: var(--secondary);
+  line-height: 1.75;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
-
 .nav-panel-content ul,
-.nav-panel-content ol {
-  padding-left: 18px;
-  margin: 0;
-}
-
+.nav-panel-content ol { padding-left: 18px; margin: 0; }
 .nav-panel-content li { margin-bottom: 6px; }
 
 /*--------------------------------------------------------------------
@@ -134,56 +149,63 @@ MAP
 }
 
 /*--------------------------------------------------------------------
-CONTROLS (top-left, scrollable)
+CONTROLS — left panel
 --------------------------------------------------------------------*/
 
 #controls {
   position: absolute;
-  top: calc(var(--nav-h) + 10px);
-  left: 10px;
-  width: 320px;
-  max-height: calc(100vh - var(--nav-h) - 20px);
+  top: calc(var(--nav-h) + 12px);
+  left: 12px;
+  width: 316px;
+  max-height: calc(100vh - var(--nav-h) - 24px);
   overflow-y: auto;
   overflow-x: visible;
   z-index: 10;
   scrollbar-width: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 #controls::-webkit-scrollbar { display: none; }
 
-/*-- Shared panel card --*/
-
+/* Shared card */
 .panel-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  padding: 10px 12px;
+  background: var(--bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--separator);
+  box-shadow: var(--shadow);
+  padding: 12px 14px;
   margin-top: 8px;
 }
 
 .section-label {
   font-size: 10px;
   font-weight: 700;
-  color: #999;
+  color: var(--tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin-bottom: 8px;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
 }
 
 .panel-divider {
-  border-top: 1px solid #eee;
+  border: none;
+  border-top: 1px solid var(--separator);
   margin: 10px 0;
 }
 
 /*-- Search card --*/
 
 #search-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  background: var(--bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--separator);
+  box-shadow: var(--shadow);
   display: flex;
   align-items: center;
-  padding: 8px 10px;
-  gap: 8px;
+  padding: 10px 12px;
+  gap: 10px;
   overflow: visible;
 }
 
@@ -197,23 +219,23 @@ CONTROLS (top-left, scrollable)
 }
 
 #icon-circle {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  border: 2px solid #555;
+  border: 2px solid var(--blue);
   display: block;
 }
 
 #icon-dots {
-  font-size: 14px;
-  color: #aaa;
+  font-size: 13px;
+  color: var(--tertiary);
   line-height: 1;
   letter-spacing: -1px;
 }
 
 #icon-pin {
-  font-size: 14px;
-  color: #e31837;
+  font-size: 13px;
+  color: var(--red);
   line-height: 1;
 }
 
@@ -222,15 +244,8 @@ CONTROLS (top-left, scrollable)
   min-width: 0;
 }
 
-#geocoder-start {
-  position: relative;
-  z-index: 2;
-}
-
-#geocoder-end {
-  position: relative;
-  z-index: 1;
-}
+#geocoder-start { position: relative; z-index: 2; }
+#geocoder-end   { position: relative; z-index: 1; }
 
 #geocoder-start .mapboxgl-ctrl-geocoder,
 #geocoder-end .mapboxgl-ctrl-geocoder {
@@ -249,57 +264,55 @@ CONTROLS (top-left, scrollable)
 
 #geocoder-start .mapboxgl-ctrl-geocoder--input,
 #geocoder-end .mapboxgl-ctrl-geocoder--input {
-  padding: 6px 30px 6px 4px;
+  padding: 5px 28px 5px 2px;
   font-size: 14px;
   height: auto;
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
 .mapboxgl-ctrl-geocoder .suggestions {
   position: absolute !important;
   z-index: 9999 !important;
-  width: 300px;
+  width: 296px;
   left: 0;
   background: white;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--separator);
+  overflow: hidden;
 }
 
 #input-divider {
   height: 1px;
-  background: #ebebeb;
-  margin: 2px 0;
+  background: var(--separator);
+  margin: 3px 0;
 }
 
-/*-- Action buttons (GPS + Swap) --*/
+/*-- GPS + Swap buttons --*/
 
 #search-btns {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   flex-shrink: 0;
 }
 
-#gps-btn,
-#swap-btn {
-  background: none;
-  border: 1px solid #ddd;
+#gps-btn, #swap-btn {
+  background: var(--blue-light);
+  border: none;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  font-size: 14px;
+  width: 28px; height: 28px;
+  font-size: 13px;
   cursor: pointer;
-  color: #555;
+  color: var(--blue);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   transition: background 0.15s;
 }
-
-#gps-btn:hover,
-#swap-btn:hover {
-  background: #f0f4ff;
-}
+#gps-btn:hover, #swap-btn:hover { background: #d0e4ff; }
 
 /*-- Landmarks --*/
 
@@ -310,30 +323,30 @@ CONTROLS (top-left, scrollable)
 }
 
 .landmark-btn {
-  background: #f0f4ff;
-  border: 1px solid #c5d5f7;
-  border-radius: 14px;
-  padding: 4px 10px;
+  background: var(--blue-light);
+  border: none;
+  border-radius: 20px;
+  padding: 5px 11px;
   font-size: 12px;
-  color: #1565c0;
+  font-weight: 500;
+  color: var(--blue);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  transition: background 0.15s, color 0.15s;
   white-space: nowrap;
 }
-
-.landmark-btn:hover {
-  background: #1976d2;
-  color: white;
-  border-color: #1976d2;
-}
+.landmark-btn:hover { background: var(--blue); color: white; }
 
 /*-- Route toggle --*/
 
 #route-toggle {
   display: flex;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background: var(--bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--separator);
+  box-shadow: var(--shadow);
   margin-top: 8px;
   overflow: hidden;
 }
@@ -342,72 +355,76 @@ CONTROLS (top-left, scrollable)
   flex: 1;
   border: none;
   background: none;
-  padding: 8px 0;
+  padding: 9px 0;
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  color: #555;
-  border-right: 1px solid #eee;
-  transition: background 0.15s;
+  color: var(--secondary);
+  border-right: 1px solid var(--separator);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  transition: background 0.15s, color 0.15s;
 }
-
 .toggle-btn:last-child { border-right: none; }
-
 .toggle-btn.active {
-  background: #1976d2;
+  background: var(--blue);
   color: white;
-  font-weight: bold;
+  font-weight: 600;
 }
-
-.toggle-btn:hover:not(.active) {
-  background: #f0f0f0;
-}
+.toggle-btn:hover:not(.active) { background: var(--blue-light); color: var(--blue); }
 
 /*-- Safety warning --*/
 
 #safety-warning {
-  background: #fff3e0;
-  border: 1px solid #fb8c00;
-  color: #e65100;
+  background: #fff4e5;
+  border: 1px solid #ffd58a;
+  color: #b25000;
   font-size: 13px;
   font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-top: 6px;
+  padding: 10px 13px;
+  border-radius: 12px;
+  margin-top: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
-/*-- Status & info --*/
+/*-- Status --*/
 
 #status {
-  background: #fff8e1;
-  border: 1px solid #f9a825;
-  color: #555;
+  background: #f2f2f7;
+  border: 1px solid var(--separator);
+  color: var(--secondary);
   font-size: 13px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  margin-top: 6px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  margin-top: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
+/*-- Route info --*/
+
 #info {
-  background: white;
+  background: var(--bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   padding: 12px 14px;
   margin-top: 8px;
-  border-radius: 6px;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--separator);
+  box-shadow: var(--shadow);
   font-size: 14px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
 .route-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 5px;
   margin-bottom: 6px;
 }
 
 .swatch {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 12px; height: 12px;
   border-radius: 3px;
   flex-shrink: 0;
 }
@@ -415,23 +432,21 @@ CONTROLS (top-left, scrollable)
 .route-sub {
   width: 100%;
   font-size: 12px;
-  color: #666;
-  padding-left: 18px;
-  margin-top: 2px;
+  color: var(--secondary);
+  padding-left: 17px;
+  margin-top: 1px;
 }
 
 /*-- Markers --*/
 
 .custom-marker {
-  width: 14px;
-  height: 14px;
+  width: 14px; height: 14px;
   border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  border: 2.5px solid white;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
 }
-
-.marker-start { background: #1976d2; }
-.marker-end   { background: #e31837; }
+.marker-start { background: var(--blue); }
+.marker-end   { background: var(--red); }
 
 /*--------------------------------------------------------------------
 LEGEND (inside left panel)
@@ -440,84 +455,67 @@ LEGEND (inside left panel)
 .legend-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 5px;
+  gap: 9px;
+  margin-bottom: 6px;
   font-size: 13px;
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
 .legend-swatch {
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 2px;
-  border: 1px solid #ccc;
+  width: 14px; height: 14px;
+  border-radius: 4px;
   flex-shrink: 0;
 }
 
 .legend-circle {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 10px; height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .legend-line {
   display: inline-block;
-  width: 20px;
-  height: 4px;
+  width: 20px; height: 3px;
   border-radius: 2px;
   flex-shrink: 0;
 }
 
-/* Police station toggle row */
-.legend-toggle-row {
-  gap: 6px;
-}
+/* Police station toggle */
+.legend-toggle-row { gap: 8px; }
 
 .layer-toggle {
   position: relative;
   display: inline-block;
-  width: 28px;
-  height: 16px;
+  width: 30px; height: 18px;
   flex-shrink: 0;
 }
-
 .layer-toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  opacity: 0; width: 0; height: 0;
   position: absolute;
 }
-
 .toggle-track {
   position: absolute;
   inset: 0;
-  background: #ccc;
-  border-radius: 16px;
+  background: var(--tertiary);
+  border-radius: 18px;
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .toggle-track::after {
   content: "";
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 14px; height: 14px;
   background: white;
   border-radius: 50%;
-  top: 2px;
-  left: 2px;
+  top: 2px; left: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   transition: transform 0.2s;
 }
-
-.layer-toggle input:checked + .toggle-track {
-  background: #1565c0;
-}
-
-.layer-toggle input:checked + .toggle-track::after {
-  transform: translateX(12px);
-}
+.layer-toggle input:checked + .toggle-track { background: var(--blue); }
+.layer-toggle input:checked + .toggle-track::after { transform: translateX(12px); }
 
 /*--------------------------------------------------------------------
 RISK SLIDER
@@ -526,23 +524,25 @@ RISK SLIDER
 .risk-slider {
   width: 100%;
   margin: 4px 0 2px;
-  accent-color: #8B1E21;
+  accent-color: var(--blue);
   cursor: pointer;
+  height: 4px;
 }
 
 .slider-labels {
   display: flex;
   justify-content: space-between;
   font-size: 10px;
-  color: #999;
+  color: var(--tertiary);
   margin-bottom: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
 .slider-value-label {
   text-align: center;
   font-size: 11px;
-  color: #666;
-  font-style: italic;
+  color: var(--secondary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
 /*--------------------------------------------------------------------
@@ -552,47 +552,52 @@ HOVER TOOLTIP
 #hover-tooltip {
   display: none;
   position: fixed;
-  background: white;
-  padding: 10px 13px;
-  border-radius: 8px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.22);
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--separator);
+  box-shadow: var(--shadow-lg);
   font-size: 13px;
   pointer-events: none;
   z-index: 1000;
   max-width: 200px;
-  border-left: 4px solid #8B1E21;
+  border-left: 3px solid #8B1E21;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
 #hover-name {
   font-weight: 700;
   font-size: 13px;
   margin-bottom: 4px;
-  color: #222;
+  color: var(--label);
+  letter-spacing: -0.2px;
 }
 
 #hover-level {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  margin-bottom: 7px;
   padding: 2px 7px;
-  border-radius: 3px;
+  border-radius: 4px;
   display: inline-block;
   color: white;
 }
 
 #hover-desc {
   font-size: 12px;
-  color: #444;
-  margin-bottom: 5px;
+  color: var(--secondary);
+  margin-bottom: 6px;
   line-height: 1.4;
 }
 
 #hover-compare {
   font-size: 11px;
-  color: #888;
-  border-top: 1px solid #f0f0f0;
-  padding-top: 5px;
-  margin-top: 3px;
+  color: var(--tertiary);
+  border-top: 1px solid var(--separator);
+  padding-top: 6px;
+  margin-top: 2px;
 }
