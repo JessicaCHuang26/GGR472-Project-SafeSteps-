@@ -239,6 +239,78 @@ function initLayers() {
     });
   }
 
+  /*--------------------------------------------------------------------
+  TTC SUBWAY LINES
+  --------------------------------------------------------------------*/
+
+  if (!map.getSource("subway_lines")) {
+    map.addSource("subway_lines", {
+      type: "geojson",
+      data: "Construction Features/TTC_SUBWAY_LINES_WGS84.geojson"
+    });
+  }
+
+  if (!map.getLayer("subway_lines")) {
+    map.addLayer({
+      id: "subway_lines",
+      type: "line",
+      source: "subway_lines",
+      layout: {
+        "line-join": "round",
+        "line-cap": "round"
+      },
+      paint: {
+
+        "line-color": [
+          "match",
+          ["get", "ROUTE_NAME"],
+
+          "LINE 1 (YONGE-UNIVERSITY)", "#FFD100",   // Line 1 Yonge-University (yellow)
+          "LINE 2 (BLOOR - DANFORTH)", "#00A651",   // Line 2 Bloor-Danforth (green)
+          "LINE 3 (SCARBOROUGH)", "#0082C8",   // Line 3 Scarborough (blue)
+          "LINE 4 (SHEPPARD)", "#A05EB5",   // Line 4 Sheppard (purple)
+
+          "#FFD100"
+        ],
+
+        "line-width": 4,
+        "line-opacity": 0.9
+      }
+    });
+  }
+
+  /*--------------------------------------------------------------------
+  SUBWAY POPUP
+  --------------------------------------------------------------------*/
+
+  const subwayPopup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+    offset: 10
+  });
+
+  map.on("mouseenter", "subway_lines", (e) => {
+
+    map.getCanvas().style.cursor = "pointer";
+
+    const props = e.features[0].properties;
+
+    const lineName = props.ROUTE_NAME || `Line ${props.LINE}`;
+
+    subwayPopup
+      .setLngLat(e.lngLat)
+      .setHTML(`🚇 <b>${lineName}</b>`)
+      .addTo(map);
+
+  });
+
+  map.on("mouseleave", "subway_lines", () => {
+
+    map.getCanvas().style.cursor = "";
+    subwayPopup.remove();
+
+  });
+
 }
 
 /*--------------------------------------------------------------------
@@ -335,6 +407,20 @@ document.getElementById("police-toggle").addEventListener("change", (e) => {
   if (map.getLayer("police_stations")) {
     map.setLayoutProperty("police_stations", "visibility",
       e.target.checked ? "visible" : "none");
+  }
+});
+
+/*--------------------------------------------------------------------
+SUBWAY TOGGLE
+--------------------------------------------------------------------*/
+
+document.getElementById("subway-toggle").addEventListener("change", (e) => {
+  if (map.getLayer("subway_lines")) {
+    map.setLayoutProperty(
+      "subway_lines",
+      "visibility",
+      e.target.checked ? "visible" : "none"
+    );
   }
 });
 
@@ -510,12 +596,12 @@ async function getRoute() {
 
   setStatus("");
 
-  addRouteLayer("fastest", fastestRoute.geometry, "#1976d2");
+  addRouteLayer("fastest", fastestRoute.geometry, "#42ccc5");
   document.getElementById("fastest-time").innerText =
     Math.round(fastestRoute.duration / 60) + " " + t("min");
 
   if (!isSameRoute) {
-    addRouteLayer("safest", safestRoute.geometry, "#388e3c");
+    addRouteLayer("safest", safestRoute.geometry, "#3cd649");
     const fastRisk  = routeRiskPerKm(fastestRoute);
     const safeRisk  = routeRiskPerKm(safestRoute);
     const reduction = Math.round((1 - safeRisk / fastRisk) * 100);

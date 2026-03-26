@@ -116,11 +116,11 @@
 
   <div id="info" style="display:none">
     <div id="fastest-row" class="route-row">
-      <span class="swatch" style="background:#1976d2"></span>
+      <span class="swatch" style="background:#42ccc5"></span>
       <b>Fastest</b> &mdash; <span id="fastest-time">--</span>
     </div>
     <div id="safest-row" class="route-row">
-      <span class="swatch" style="background:#388e3c"></span>
+      <span class="swatch" style="background:#3cd649"></span>
       <b>Safest</b> &mdash; <span id="safest-time">--</span>
       <div class="route-sub"><span id="safest-reduction"></span></div>
     </div>
@@ -161,8 +161,35 @@
       <span class="legend-circle" style="background:#1565c0"></span>
       <span>Police station</span>
     </div>
-    <div class="legend-row"><span class="legend-line" style="background:#1976d2"></span><span>Fastest route</span></div>
-    <div class="legend-row"><span class="legend-line" style="background:#388e3c"></span><span>Safest route</span></div>
+    <div class="legend-row legend-toggle-row">
+      <label class="layer-toggle">
+        <input type="checkbox" id="subway-toggle" checked>
+        <span class="toggle-track"></span>
+      </label>
+      <span>TTC Subway Lines</span>
+    </div>
+
+    <div class="legend-row">
+      <span class="legend-line" style="background:#FFD100"></span>
+      <span>Line 1 – Yonge-University</span>
+    </div>
+
+    <div class="legend-row">
+      <span class="legend-line" style="background:#00A651"></span>
+      <span>Line 2 – Bloor-Danforth</span>
+    </div>
+
+    <div class="legend-row">
+      <span class="legend-line" style="background:#0082C8"></span>
+      <span>Line 3 – Scarborough</span>
+    </div>
+
+    <div class="legend-row">
+      <span class="legend-line" style="background:#A05EB5"></span>
+      <span>Line 4 – Sheppard</span>
+    </div>
+    <div class="legend-row"><span class="legend-line" style="background:#42ccc5"></span><span>Fastest route</span></div>
+    <div class="legend-row"><span class="legend-line" style="background:#3cd649"></span><span>Safest route</span></div>
   </div>
 
 </div>
