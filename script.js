@@ -480,6 +480,7 @@ function clearRoutes() {
     if (map.getLayer("route-" + label)) map.removeLayer("route-" + label);
     if (map.getSource("route-" + label)) map.removeSource("route-" + label);
   });
+  document.getElementById("route-toggle").style.display = "none";
 }
 
 /*--------------------------------------------------------------------
@@ -626,6 +627,7 @@ async function getRoute() {
   }
 
   document.getElementById("info").style.display = "block";
+  document.getElementById("route-toggle").style.display = "flex";
   applyRouteMode();
 
   // Fit map to show full routes
