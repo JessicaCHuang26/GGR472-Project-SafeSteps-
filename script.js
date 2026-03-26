@@ -98,7 +98,7 @@ function initLayers() {
 
   map.addSource("ttc_stops", {
     type: "geojson",
-    data: "data/cleaned/ttc_stops.geojson"
+    data: "Construction Features/ttc_stops.geojson"
   });
 
   map.addLayer({
