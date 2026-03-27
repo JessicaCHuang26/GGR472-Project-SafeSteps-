@@ -87,8 +87,10 @@
 
   <!-- Popular destinations -->
   <div class="panel-card">
-    <div class="section-label">POPULAR DESTINATIONS</div>
-    <div id="landmarks-grid">
+    <div class="section-label collapsible-header" id="landmarks-toggle">
+      POPULAR DESTINATIONS <span class="collapse-arrow">▾</span>
+    </div>
+    <div id="landmarks-grid" class="collapsible-body" style="display:none">
       <button class="landmark-btn" data-lng="-79.3871" data-lat="43.6426">CN Tower</button>
       <button class="landmark-btn" data-lng="-79.3832" data-lat="43.6452">Union Station</button>
       <button class="landmark-btn" data-lng="-79.3803" data-lat="43.6545">Eaton Centre</button>
@@ -132,10 +134,10 @@
   <!-- ── Crime Risk Legend ── -->
   <div class="panel-card" id="legend-section">
     <div class="section-label">CRIME RISK LEVEL</div>
-    <div class="legend-row"><span class="legend-swatch" style="background:#C0D7C9"></span><span>Low Risk</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:#DFB7B5"></span><span>Moderate Risk</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:#BD7577"></span><span>High Risk</span></div>
-    <div class="legend-row"><span class="legend-swatch" style="background:#8B1E21"></span><span>Danger</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#FFE082"></span><span>Low Risk</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#FFB74D"></span><span>Moderate Risk</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#EF5350"></span><span>High Risk</span></div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#B71C1C"></span><span>Danger</span></div>
 
     <div class="panel-divider"></div>
 
@@ -154,7 +156,10 @@
 
   <!-- ── Map Layers ── -->
   <div class="panel-card" id="layers-section">
-    <div class="section-label">MAP LAYERS</div>
+    <div class="section-label collapsible-header" id="layers-toggle">
+      MAP LAYERS <span class="collapse-arrow">▾</span>
+    </div>
+    <div class="collapsible-body" id="layers-body" style="display:none">
     <div class="legend-row legend-toggle-row">
       <label class="layer-toggle">
         <input type="checkbox" id="police-toggle" checked>
@@ -192,6 +197,7 @@
     </div>
     <div class="legend-row"><span class="legend-line" style="background:#42ccc5"></span><span>Fastest route</span></div>
     <div class="legend-row"><span class="legend-line" style="background:#3cd649"></span><span>Safest route</span></div>
+    </div><!-- end layers-body -->
   </div>
 
 </div>

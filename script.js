@@ -15,7 +15,7 @@ const STRINGS = {
   calculating:      "Calculating routes…",
   noRoute:          "No route found between these locations.",
   loadingData:      "Still loading data, please wait…",
-  safetyWarning:    "⚠️ Route passes through a high-crime area. Stay alert.",
+  safetyWarning:    "Route passes through a high-crime area. Stay alert.",
   myLocation:       "My location",
   showingAll:       "Showing all areas",
   showingMod:       "Showing Moderate Risk and above",
@@ -34,11 +34,31 @@ mapboxgl.accessToken =
 
 const map = new mapboxgl.Map({
   container: "map",
-  style: "mapbox://styles/mapbox/streets-v12",
+  style: "mapbox://styles/mapbox/light-v11",
   center: [-79.36, 43.73],
   zoom: 10.2,
   bearing: -17,
   pitch: 0,
+});
+
+// Navigation controls (zoom +/-)
+map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "bottom-right");
+
+// Geolocate control (crosshair locate button)
+const geolocate = new mapboxgl.GeolocateControl({
+  positionOptions: { enableHighAccuracy: true },
+  trackUserLocation: false,
+  showUserLocation: false,
+  showUserHeadingIndicator: false,
+  showAccuracyCircle: false,
+});
+map.addControl(geolocate, "bottom-right");
+geolocate.on("geolocate", (e) => {
+  startCoords = [e.coords.longitude, e.coords.latitude];
+  startMarker.setLngLat(startCoords).addTo(map);
+  const input = document.querySelector("#geocoder-start input");
+  if (input) input.value = t("myLocation");
+  getRoute();
 });
 
 let incidentsData    = null;
@@ -103,27 +123,29 @@ function initLayers() {
         // Hover: brighter, more saturated colours; normal: original palette
         "fill-color": [
           "case", ["boolean", ["feature-state", "hover"], false],
+          // Hover: saturated yellow → orange → red
           ["interpolate", ["linear"], rateExpr,
-            200,  "#8DC4A4",
-            415,  "#6BAAA0",
-            595,  "#D97F7D",
-            807,  "#A84A4C",
-            1008, "#861C23",
-            3500, "#5A0A0D"
+            200,  "#FFE566",
+            415,  "#FFB300",
+            595,  "#FF6F00",
+            807,  "#E53935",
+            1008, "#B71C1C",
+            3500, "#7B1818"
           ],
+          // Normal: soft yellow → orange → red
           ["interpolate", ["linear"], rateExpr,
-            200,  "#DDEBE5",
-            415,  "#C0D7C9",
-            595,  "#DFB7B5",
-            807,  "#BD7577",
-            1008, "#A74249",
-            3500, "#8B1E21"
+            200,  "#FFFDE7",
+            415,  "#FFE082",
+            595,  "#FFB74D",
+            807,  "#EF5350",
+            1008, "#C62828",
+            3500, "#7B1818"
           ]
         ],
         "fill-opacity": [
           "case", ["boolean", ["feature-state", "hover"], false],
-          0.85,
-          0.5
+          0.80,
+          0.38
         ],
         "fill-outline-color": [
           "case", ["boolean", ["feature-state", "hover"], false],
@@ -139,10 +161,10 @@ function initLayers() {
 
     // Metadata for each risk tier
     const LEVEL_META = {
-      danger:   { label: "Danger",        bg: "#8B1E21", desc: "High crime area — exercise caution" },
-      high:     { label: "High Risk",     bg: "#A74249", desc: "Higher crime area — take precautions" },
-      moderate: { label: "Moderate Risk", bg: "#BD7577", desc: "Some crime activity — stay aware" },
-      low:      { label: "Low Risk",      bg: "#6BAAA0", desc: "Relatively safe area" },
+      danger:   { label: "Danger",        bg: "#B71C1C", desc: "High crime area — exercise caution" },
+      high:     { label: "High Risk",     bg: "#E53935", desc: "Higher crime area — take precautions" },
+      moderate: { label: "Moderate Risk", bg: "#FF8F00", desc: "Some crime activity — stay aware" },
+      low:      { label: "Low Risk",      bg: "#F9A825", desc: "Relatively safe area" },
     };
 
     map.on("mousemove", "neighbourhood_crime", (e) => {
@@ -230,7 +252,7 @@ function initLayers() {
     map.on("mouseenter", "police_stations", (e) => {
       map.getCanvas().style.cursor = "pointer";
       policePopup.setLngLat(e.features[0].geometry.coordinates)
-        .setHTML(`🚔 <b>${e.features[0].properties.FACILITY}</b>`)
+        .setHTML(`<b>${e.features[0].properties.FACILITY} Police Station</b>`)
         .addTo(map);
     });
     map.on("mouseleave", "police_stations", () => {
@@ -250,31 +272,37 @@ function initLayers() {
     });
   }
 
+  if (!map.getLayer("subway_lines_casing")) {
+    map.addLayer({
+      id: "subway_lines_casing",
+      type: "line",
+      source: "subway_lines",
+      layout: { "line-join": "round", "line-cap": "round" },
+      paint: {
+        "line-color": "#ffffff",
+        "line-width": 8,
+        "line-opacity": 1.0
+      }
+    });
+  }
+
   if (!map.getLayer("subway_lines")) {
+    const lineColorExpr = ["match", ["get", "ROUTE_NAME"],
+      "LINE 1 (YONGE-UNIVERSITY)", "#FFD100",
+      "LINE 2 (BLOOR - DANFORTH)", "#00A651",
+      "LINE 3 (SCARBOROUGH)",      "#0082C8",
+      "LINE 4 (SHEPPARD)",         "#A05EB5",
+      "#FFD100"
+    ];
     map.addLayer({
       id: "subway_lines",
       type: "line",
       source: "subway_lines",
-      layout: {
-        "line-join": "round",
-        "line-cap": "round"
-      },
+      layout: { "line-join": "round", "line-cap": "round" },
       paint: {
-
-        "line-color": [
-          "match",
-          ["get", "ROUTE_NAME"],
-
-          "LINE 1 (YONGE-UNIVERSITY)", "#FFD100",   // Line 1 Yonge-University (yellow)
-          "LINE 2 (BLOOR - DANFORTH)", "#00A651",   // Line 2 Bloor-Danforth (green)
-          "LINE 3 (SCARBOROUGH)", "#0082C8",   // Line 3 Scarborough (blue)
-          "LINE 4 (SHEPPARD)", "#A05EB5",   // Line 4 Sheppard (purple)
-
-          "#FFD100"
-        ],
-
+        "line-color": lineColorExpr,
         "line-width": 4,
-        "line-opacity": 0.9
+        "line-opacity": 1.0
       }
     });
   }
@@ -339,17 +367,114 @@ const endGeocoder = new MapboxGeocoder({
 document.getElementById("geocoder-start").appendChild(startGeocoder.onAdd(map));
 document.getElementById("geocoder-end").appendChild(endGeocoder.onAdd(map));
 
-// Custom markers
-const startMarkerEl = document.createElement("div");
-startMarkerEl.className = "custom-marker marker-start";
-const endMarkerEl = document.createElement("div");
-endMarkerEl.className = "custom-marker marker-end";
+// Custom Google Maps–style pin markers
+function makePinEl(color, label) {
+  const el = document.createElement("div");
+  el.style.cssText = "cursor:pointer; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));";
+  el.innerHTML = `
+    <svg width="32" height="44" viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 0C7.163 0 0 7.163 0 16c0 10.667 16 28 16 28S32 26.667 32 16C32 7.163 24.837 0 16 0z"
+            fill="${color}"/>
+      <circle cx="16" cy="16" r="7" fill="white"/>
+      <text x="16" y="20" text-anchor="middle"
+            font-size="9" font-weight="700" font-family="-apple-system,sans-serif"
+            fill="${color}">${label}</text>
+    </svg>`;
+  return el;
+}
+
+const startMarkerEl = makePinEl("#34a853", "");   // green
+const endMarkerEl   = makePinEl("#ea4335", "");   // red
 
 const startMarker = new mapboxgl.Marker({ element: startMarkerEl, anchor: "bottom" });
 const endMarker   = new mapboxgl.Marker({ element: endMarkerEl,   anchor: "bottom" });
 
+/*--------------------------------------------------------------------
+RECENT SEARCHES
+--------------------------------------------------------------------*/
+
+const RECENT_KEY = "safesteps_recent";
+const RECENT_MAX = 5;
+
+function getRecentSearches() {
+  try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveRecentSearch(name, coords) {
+  if (!name || name === t("myLocation")) return;
+  let list = getRecentSearches().filter(r => r.name !== name);
+  list.unshift({ name, coords });
+  if (list.length > RECENT_MAX) list = list.slice(0, RECENT_MAX);
+  localStorage.setItem(RECENT_KEY, JSON.stringify(list));
+}
+
+function showRecentDropdown(inputEl, onSelect) {
+  removeRecentDropdown();
+  const list = getRecentSearches();
+  if (!list.length) return;
+
+  const drop = document.createElement("div");
+  drop.id = "recent-dropdown";
+  drop.innerHTML = `<div class="recent-label">Recent</div>` +
+    list.map((r, i) =>
+      `<div class="recent-item" data-i="${i}">
+        <span class="recent-name">${r.name}</span>
+      </div>`
+    ).join("");
+
+  // Position below the input
+  const rect = inputEl.getBoundingClientRect();
+  drop.style.cssText = `
+    position:fixed;top:${rect.bottom + 4}px;left:${rect.left}px;
+    width:${rect.width}px;z-index:9999;
+  `;
+
+  drop.querySelectorAll(".recent-item").forEach(el => {
+    el.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      const item = list[parseInt(el.dataset.i)];
+      inputEl.value = item.name;
+      onSelect(item.name, item.coords);
+      removeRecentDropdown();
+    });
+  });
+
+  document.body.appendChild(drop);
+}
+
+function removeRecentDropdown() {
+  const existing = document.getElementById("recent-dropdown");
+  if (existing) existing.remove();
+}
+
+function attachRecentSearch(geocoderId, onSelect) {
+  // Wait for geocoder to render its input
+  setTimeout(() => {
+    const input = document.querySelector(`#${geocoderId} input`);
+    if (!input) return;
+    input.addEventListener("focus", () => showRecentDropdown(input, onSelect));
+    input.addEventListener("blur",  () => setTimeout(removeRecentDropdown, 150));
+  }, 500);
+}
+
+attachRecentSearch("geocoder-start", (name, coords) => {
+  startCoords = coords;
+  startMarker.setLngLat(coords).addTo(map);
+  map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 13) });
+  getRoute();
+});
+
+attachRecentSearch("geocoder-end", (name, coords) => {
+  endCoords = coords;
+  endMarker.setLngLat(coords).addTo(map);
+  map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 13) });
+  getRoute();
+});
+
 startGeocoder.on("result", (e) => {
   startCoords = e.result.center;
+  saveRecentSearch(e.result.place_name?.split(",")[0] || e.result.text, startCoords);
   startMarker.setLngLat(startCoords).addTo(map);
   map.flyTo({ center: startCoords, zoom: Math.max(map.getZoom(), 13) });
   getRoute();
@@ -357,31 +482,18 @@ startGeocoder.on("result", (e) => {
 
 endGeocoder.on("result", (e) => {
   endCoords = e.result.center;
+  saveRecentSearch(e.result.place_name?.split(",")[0] || e.result.text, endCoords);
   endMarker.setLngLat(endCoords).addTo(map);
   map.flyTo({ center: endCoords, zoom: Math.max(map.getZoom(), 13) });
   getRoute();
 });
 
 /*--------------------------------------------------------------------
-GPS BUTTON
+GPS BUTTON (panel button kept for accessibility)
 --------------------------------------------------------------------*/
 
 document.getElementById("gps-btn").addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by your browser.");
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      startCoords = [pos.coords.longitude, pos.coords.latitude];
-      startMarker.setLngLat(startCoords).addTo(map);
-      map.flyTo({ center: startCoords, zoom: Math.max(map.getZoom(), 14) });
-      const input = document.querySelector("#geocoder-start input");
-      if (input) input.value = t("myLocation");
-      getRoute();
-    },
-    () => { alert("Could not retrieve your location. Please enable location services."); }
-  );
+  geolocate.trigger();
 });
 
 /*--------------------------------------------------------------------
@@ -440,19 +552,54 @@ document.querySelectorAll(".toggle-btn").forEach(btn => {
 });
 
 function applyRouteMode() {
-  if (map.getLayer("route-fastest")) {
-    map.setLayoutProperty("route-fastest", "visibility",
-      routeMode === "safest" ? "none" : "visible");
-  }
-  if (map.getLayer("route-safest")) {
-    map.setLayoutProperty("route-safest", "visibility",
-      routeMode === "fastest" ? "none" : "visible");
-  }
+  ["fastest", "safest"].forEach(label => {
+    const vis = (label === "fastest" && routeMode === "safest") ||
+                (label === "safest"  && routeMode === "fastest") ? "none" : "visible";
+    if (map.getLayer("route-" + label))        map.setLayoutProperty("route-" + label,        "visibility", vis);
+    if (map.getLayer("route-" + label + "-glow")) map.setLayoutProperty("route-" + label + "-glow", "visibility", vis);
+  });
   const fastestRow = document.getElementById("fastest-row");
   const safestRow  = document.getElementById("safest-row");
   if (fastestRow) fastestRow.style.display = routeMode === "safest"  ? "none" : "flex";
   if (safestRow)  safestRow.style.display  = routeMode === "fastest" ? "none" : "flex";
 }
+
+/*--------------------------------------------------------------------
+COLLAPSIBLE PANELS
+--------------------------------------------------------------------*/
+
+function initCollapsible(headerId, bodyId) {
+  const header = document.getElementById(headerId);
+  const body   = document.getElementById(bodyId) ||
+                 header?.nextElementSibling;
+  if (!header || !body) return;
+  header.addEventListener("click", () => {
+    const isOpen = body.style.display !== "none";
+    body.style.display = isOpen ? "none" : "";  // "" lets CSS grid/flex take over
+    header.classList.toggle("open", !isOpen);
+  });
+}
+
+initCollapsible("landmarks-toggle", "landmarks-grid");
+initCollapsible("layers-toggle",    "layers-body");
+
+// Expand Popular Destinations when search is focused
+setTimeout(() => {
+  document.querySelectorAll("#geocoder-start input, #geocoder-end input").forEach(inp => {
+    inp.addEventListener("focus", () => {
+      const grid = document.getElementById("landmarks-grid");
+      const toggle = document.getElementById("landmarks-toggle");
+      if (grid && grid.style.display === "none") {
+        grid.style.display = "";   // let CSS grid take over
+        toggle?.classList.add("open");
+      }
+    });
+  });
+}, 600);
+
+/*--------------------------------------------------------------------
+SWAP
+--------------------------------------------------------------------*/
 
 document.getElementById("swap-btn").addEventListener("click", () => {
   const tmpCoords = startCoords;
@@ -477,6 +624,7 @@ CLEAR ROUTES
 
 function clearRoutes() {
   ["fastest", "safest"].forEach(label => {
+    if (map.getLayer("route-" + label + "-glow")) map.removeLayer("route-" + label + "-glow");
     if (map.getLayer("route-" + label)) map.removeLayer("route-" + label);
     if (map.getSource("route-" + label)) map.removeSource("route-" + label);
   });
@@ -534,23 +682,17 @@ function routePassesThroughHighCrime(route) {
 function generateWaypointCandidates() {
   const line      = turf.lineString([startCoords, endCoords]);
   const totalDist = turf.length(line, { units: "kilometers" });
-  const candidates = [];
-  const offsets    = [0.3, 0.6];
-  const fractions  = [0.25, 0.5, 0.75];
-  const bearing    = turf.bearing(turf.point(startCoords), turf.point(endCoords));
+  const bearing   = turf.bearing(turf.point(startCoords), turf.point(endCoords));
+  const offset    = Math.min(0.4, totalDist * 0.15); // scale offset with route length
 
-  fractions.forEach(frac => {
-    const along = turf.along(line, totalDist * frac, { units: "kilometers" });
-    const [lon, lat] = along.geometry.coordinates;
-    offsets.forEach(dist => {
-      [(bearing - 90 + 360) % 360, (bearing + 90) % 360].forEach(bear => {
-        const dest = turf.destination([lon, lat], dist, bear, { units: "kilometers" });
-        candidates.push(dest.geometry.coordinates);
-      });
-    });
-  });
+  // Only try midpoint, offset left and right — 2 candidates total
+  const mid = turf.along(line, totalDist * 0.5, { units: "kilometers" });
+  const [lon, lat] = mid.geometry.coordinates;
 
-  return candidates;
+  return [
+    turf.destination([lon, lat], offset, (bearing - 90 + 360) % 360, { units: "kilometers" }).geometry.coordinates,
+    turf.destination([lon, lat], offset, (bearing + 90) % 360,       { units: "kilometers" }).geometry.coordinates,
+  ];
 }
 
 async function getRoute() {
@@ -642,11 +784,25 @@ function addRouteLayer(label, geometry, color) {
     type: "geojson",
     data: { type: "Feature", geometry }
   });
+  // Glow layer (wide + blurred)
+  map.addLayer({
+    id: "route-" + label + "-glow",
+    type: "line",
+    source: "route-" + label,
+    paint: {
+      "line-color": color,
+      "line-width": 14,
+      "line-opacity": 0.25,
+      "line-blur": 6
+    }
+  });
+  // Main route line
   map.addLayer({
     id: "route-" + label,
     type: "line",
     source: "route-" + label,
-    paint: { "line-color": color, "line-width": 5, "line-opacity": 0.9 }
+    layout: { "line-join": "round", "line-cap": "round" },
+    paint: { "line-color": color, "line-width": 7, "line-opacity": 1.0 }
   });
 }
 
