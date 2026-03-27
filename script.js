@@ -383,11 +383,8 @@ function makePinEl(color, label) {
   return el;
 }
 
-const startMarkerEl = makePinEl("#34a853", "");   // green
-const endMarkerEl   = makePinEl("#ea4335", "");   // red
-
-const startMarker = new mapboxgl.Marker({ element: startMarkerEl, anchor: "bottom" });
-const endMarker   = new mapboxgl.Marker({ element: endMarkerEl,   anchor: "bottom" });
+const startMarker = new mapboxgl.Marker({ element: makePinEl("#34a853", ""), anchor: "bottom" });
+const endMarker   = new mapboxgl.Marker({ element: makePinEl("#ea4335", ""), anchor: "bottom" });
 
 /*--------------------------------------------------------------------
 RECENT SEARCHES
