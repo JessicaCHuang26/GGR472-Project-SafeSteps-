@@ -21,49 +21,6 @@
 
 <body>
 
-<!-- ── Fixed top navbar ── -->
-<nav id="topnav">
-  <div id="nav-left">
-    <img id="nav-logo" src="logo.png" alt="SafeSteps Toronto"
-         onerror="this.style.display='none'; document.getElementById('nav-title').style.display='block'">
-    <span id="nav-title" style="display:none">SafeSteps Toronto</span>
-  </div>
-  <div id="nav-links">
-    <button class="nav-btn" onclick="openPanel('data')">Data Sources</button>
-    <button class="nav-btn" onclick="openPanel('team')">Team</button>
-    <button class="nav-btn" onclick="openPanel('help')">Help</button>
-  </div>
-</nav>
-
-<!-- ── Info panels (hidden by default) ── -->
-<div id="nav-panel" style="display:none">
-  <div id="nav-panel-inner">
-    <button id="nav-panel-close" onclick="closePanel()">✕</button>
-    <div id="panel-data" class="nav-panel-content">
-      <h3>Data Sources</h3>
-      <ul>
-        <li><b>Crime incidents</b> — Toronto Police Service Open Data (2022)</li>
-        <li><b>Neighbourhood crime rates</b> — City of Toronto Open Data</li>
-        <li><b>Police facility locations</b> — City of Toronto Open Data</li>
-        <li><b>Routing</b> — Mapbox Directions API (walking profile)</li>
-      </ul>
-    </div>
-    <div id="panel-team" class="nav-panel-content" style="display:none">
-      <h3>Team</h3>
-      <p>GGR472 Group Project — University of Toronto</p>
-    </div>
-    <div id="panel-help" class="nav-panel-content" style="display:none">
-      <h3>How to Use</h3>
-      <ol>
-        <li>Enter a <b>start location</b> or tap 📍 to use your GPS</li>
-        <li>Enter a <b>destination</b> or choose a popular landmark</li>
-        <li>Choose <b>Both</b>, <b>Fastest</b>, or <b>Safest</b> to filter routes</li>
-        <li>Hover over any neighbourhood to see its crime risk level</li>
-        <li>Use the <b>Filter by Risk</b> slider to highlight high-risk areas</li>
-      </ol>
-    </div>
-  </div>
-</div>
 
 <div id="controls">
 
@@ -215,6 +172,37 @@
   <div id="hover-compare"></div>
 </div>
 
+<!-- Onboarding welcome modal -->
+<div id="welcome-modal">
+  <div id="welcome-box">
+    <div id="welcome-logo-row">
+      <img src="logo.png" alt="SafeStep Toronto" id="welcome-logo">
+    </div>
+    <p id="welcome-subtitle">Navigate Toronto safely with real-time crime risk awareness</p>
+    <ol id="welcome-steps">
+      <li><span class="step-icon">&#9711;</span> Enter a <b>start location</b> or tap the pin to use GPS</li>
+      <li><span class="step-icon">&#9679;</span> Enter a <b>destination</b> or pick a popular landmark</li>
+      <li><span class="step-icon">&#8644;</span> Choose <b>Fastest</b> or <b>Safest</b> route — or both</li>
+      <li><span class="step-icon">&#9650;</span> Hover neighbourhoods to see their <b>crime risk level</b></li>
+    </ol>
+    <div id="welcome-sources">
+      <p id="welcome-sources-title">Data Sources</p>
+      <ul>
+        <li><a href="https://data.tps.ca/maps/b4d0398d37eb4aa184065ed625ddb922" target="_blank">Assault — Toronto Police Service</a></li>
+        <li><a href="https://data.tps.ca/maps/64ddeca12da34403869968ec725e23c4" target="_blank">Shooting — Toronto Police Service</a></li>
+        <li><a href="https://data.tps.ca/datasets/d0e1e98de5f945faa2fe635dee3f4062_0/explore" target="_blank">Robbery — Toronto Police Service</a></li>
+        <li><a href="https://data.tps.ca/datasets/a96252bf61b84fc68c3926bb7485970e_0/explore" target="_blank">Pedestrian KSI — Toronto Police Service</a></li>
+        <li><a href="https://data.tps.ca/datasets/bc4c72a793014a55a674984ef175a6f3_0/explore" target="_blank">Traffic Collisions — Toronto Police Service</a></li>
+        <li><a href="https://open.toronto.ca/dataset/police-facility-locations/" target="_blank">Police Facility Locations — City of Toronto</a></li>
+      </ul>
+    </div>
+    <button id="welcome-btn" onclick="dismissWelcome()">Get Started</button>
+    <label id="welcome-skip">
+      <input type="checkbox" id="welcome-no-show"> Don't show this again
+    </label>
+  </div>
+</div>
+
 <!-- Loading modal -->
 <div id="loading-modal">
   <div class="loading-box">
@@ -228,19 +216,18 @@
 <script src="script.js"></script>
 
 <script>
-  let activePanel = null;
-  function openPanel(name) {
-    document.querySelectorAll(".nav-panel-content").forEach(el => el.style.display = "none");
-    document.getElementById("panel-" + name).style.display = "block";
-    document.getElementById("nav-panel").style.display = "flex";
-    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-    document.querySelector(`.nav-btn[onclick="openPanel('${name}')"]`).classList.add("active");
-    activePanel = name;
+  function dismissWelcome() {
+    if (document.getElementById("welcome-no-show").checked) {
+      localStorage.setItem("safestep_seen", "1");
+    }
+    document.getElementById("welcome-modal").style.display = "none";
   }
-  function closePanel() {
-    document.getElementById("nav-panel").style.display = "none";
-    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-    activePanel = null;
+
+  // Auto-show on first visit
+  if (!localStorage.getItem("safestep_seen")) {
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("welcome-modal").style.display = "flex";
+    });
   }
 </script>
 

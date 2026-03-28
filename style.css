@@ -3,7 +3,7 @@ APPLE MINIMAL — VARIABLES
 --------------------------------------------------------------------*/
 
 :root {
-  --nav-h:       58px;
+  --nav-h:       0px;
   --blue:        #007aff;
   --blue-light:  #e8f1ff;
   --green:       #34c759;
@@ -18,125 +18,6 @@ APPLE MINIMAL — VARIABLES
   --shadow-lg:   0 4px 24px rgba(0,0,0,0.11);
 }
 
-/*--------------------------------------------------------------------
-TOP NAVBAR  — frosted glass
---------------------------------------------------------------------*/
-
-#topnav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--nav-h);
-  background: rgba(255,255,255,0.88);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid var(--separator);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  z-index: 100;
-}
-
-#nav-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-#nav-logo {
-  height: 44px;
-  width: 44px;
-  object-fit: cover;
-  border-radius: 10px;
-  display: block;
-}
-
-#nav-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--label);
-  letter-spacing: -0.4px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-}
-
-#nav-links {
-  display: flex;
-  gap: 2px;
-}
-
-.nav-btn {
-  background: none;
-  border: none;
-  padding: 7px 14px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--secondary);
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  transition: background 0.15s, color 0.15s;
-}
-
-.nav-btn:hover  { background: var(--blue-light); color: var(--blue); }
-.nav-btn.active { background: var(--blue-light); color: var(--blue); font-weight: 600; }
-
-/* Side panel */
-#nav-panel {
-  position: fixed;
-  top: var(--nav-h);
-  right: 0;
-  width: 340px;
-  max-height: calc(100vh - var(--nav-h));
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid var(--separator);
-  box-shadow: -4px 0 20px rgba(0,0,0,0.07);
-  z-index: 99;
-  flex-direction: column;
-  display: none;
-}
-
-#nav-panel-inner {
-  padding: 24px 22px 24px;
-  overflow-y: auto;
-  position: relative;
-}
-
-#nav-panel-close {
-  position: absolute;
-  top: 16px; right: 16px;
-  background: var(--separator);
-  border: none;
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  font-size: 13px;
-  color: var(--secondary);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  line-height: 1;
-  transition: background 0.15s;
-}
-#nav-panel-close:hover { background: #d0d0d5; color: var(--label); }
-
-.nav-panel-content h3 {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--label);
-  margin: 0 0 16px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  letter-spacing: -0.4px;
-}
-.nav-panel-content p,
-.nav-panel-content li {
-  font-size: 14px;
-  color: var(--secondary);
-  line-height: 1.75;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-}
-.nav-panel-content ul,
-.nav-panel-content ol { padding-left: 18px; margin: 0; }
-.nav-panel-content li { margin-bottom: 6px; }
 
 /*--------------------------------------------------------------------
 MAP
@@ -667,6 +548,123 @@ HOVER TOOLTIP
 }
 
 /* LOADING MODAL */
+
+/* ── Welcome onboarding modal ─────────────────────────────── */
+#welcome-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+#welcome-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 36px 40px 28px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  text-align: center;
+  animation: welcome-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes welcome-in {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+#welcome-logo-row { margin-bottom: 16px; }
+#welcome-logo {
+  height: 160px;
+  width: auto;
+  border-radius: 22px;
+}
+#welcome-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin: 0 0 18px;
+}
+#welcome-sources {
+  text-align: left;
+  background: #f7f7f7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 0 0 18px;
+}
+#welcome-sources-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+#welcome-sources ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+#welcome-sources li { font-size: 12px; }
+#welcome-sources a {
+  color: #007aff;
+  text-decoration: none;
+}
+#welcome-sources a:hover { text-decoration: underline; }
+#welcome-steps {
+  text-align: left;
+  padding: 0;
+  margin: 0 0 24px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#welcome-steps li {
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+.step-icon {
+  font-size: 16px;
+  color: #e74c3c;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+  margin-top: 1px;
+}
+#welcome-btn {
+  width: 100%;
+  padding: 13px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: background 0.2s;
+  margin-bottom: 14px;
+}
+#welcome-btn:hover { background: #333; }
+#welcome-skip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #aaa;
+  cursor: pointer;
+}
+#welcome-skip input { cursor: pointer; }
 
 #loading-modal {
   position: fixed;
