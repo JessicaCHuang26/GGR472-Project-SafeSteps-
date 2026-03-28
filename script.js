@@ -37,7 +37,7 @@ mapboxgl.accessToken =
 const map = new mapboxgl.Map({
   container: "map",
   style: "mapbox://styles/mapbox/light-v11",
-  center: [-79.36, 43.73],
+  center: [-79.42, 43.72],
   zoom: 10.2,
   bearing: -17,
   pitch: 0,
