@@ -3,21 +3,20 @@ APPLE MINIMAL — VARIABLES
 --------------------------------------------------------------------*/
 
 :root {
-  --nav-h:       0px;
-  --blue:        #007aff;
-  --blue-light:  #e8f1ff;
-  --green:       #34c759;
-  --red:         #ff3b30;
-  --label:       #1d1d1f;
-  --secondary:   #6e6e73;
-  --tertiary:    #aeaeb2;
-  --separator:   #e5e5ea;
-  --bg:          rgba(255,255,255,0.92);
+  --nav-h: 0px;
+  --blue: #007aff;
+  --blue-light: #e8f1ff;
+  --green: #34c759;
+  --red: #ff3b30;
+  --label: #1d1d1f;
+  --secondary: #6e6e73;
+  --tertiary: #aeaeb2;
+  --separator: #e5e5ea;
+  --bg: rgba(255, 255, 255, 0.92);
   --card-radius: 14px;
-  --shadow:      0 2px 12px rgba(0,0,0,0.08);
-  --shadow-lg:   0 4px 24px rgba(0,0,0,0.11);
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.11);
 }
-
 
 /*--------------------------------------------------------------------
 MAP
@@ -25,7 +24,10 @@ MAP
 
 .map {
   position: absolute;
-  top: var(--nav-h); bottom: 0; left: 0; right: 0;
+  top: var(--nav-h);
+  bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
 }
 
@@ -45,7 +47,9 @@ CONTROLS — left panel
   scrollbar-width: none;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
-#controls::-webkit-scrollbar { display: none; }
+#controls::-webkit-scrollbar {
+  display: none;
+}
 
 /* Shared card */
 .panel-card {
@@ -127,8 +131,14 @@ CONTROLS — left panel
   min-width: 0;
 }
 
-#geocoder-start { position: relative; z-index: 2; }
-#geocoder-end   { position: relative; z-index: 1; }
+#geocoder-start {
+  position: relative;
+  z-index: 2;
+}
+#geocoder-end {
+  position: relative;
+  z-index: 1;
+}
 
 #geocoder-start .mapboxgl-ctrl-geocoder,
 #geocoder-end .mapboxgl-ctrl-geocoder {
@@ -181,11 +191,13 @@ CONTROLS — left panel
   flex-shrink: 0;
 }
 
-#gps-btn, #swap-btn {
+#gps-btn,
+#swap-btn {
   background: var(--blue-light);
   border: none;
   border-radius: 50%;
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   font-size: 13px;
   cursor: pointer;
   color: var(--blue);
@@ -195,7 +207,10 @@ CONTROLS — left panel
   padding: 0;
   transition: background 0.15s;
 }
-#gps-btn:hover, #swap-btn:hover { background: #d0e4ff; }
+#gps-btn:hover,
+#swap-btn:hover {
+  background: #d0e4ff;
+}
 
 /*-- Landmarks --*/
 
@@ -216,10 +231,15 @@ CONTROLS — left panel
   color: var(--blue);
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   white-space: nowrap;
 }
-.landmark-btn:hover { background: var(--blue); color: white; }
+.landmark-btn:hover {
+  background: var(--blue);
+  color: white;
+}
 
 /*-- Route Panel (right side) --*/
 
@@ -258,15 +278,22 @@ CONTROLS — left panel
   color: var(--secondary);
   border-right: 1px solid var(--separator);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
-.toggle-btn:last-child { border-right: none; }
+.toggle-btn:last-child {
+  border-right: none;
+}
 .toggle-btn.active {
   background: var(--blue);
   color: white;
   font-weight: 600;
 }
-.toggle-btn:hover:not(.active) { background: var(--blue-light); color: var(--blue); }
+.toggle-btn:hover:not(.active) {
+  background: var(--blue-light);
+  color: var(--blue);
+}
 
 /*-- Safety warning --*/
 
@@ -319,12 +346,17 @@ CONTROLS — left panel
   transition: background 0.15s;
   position: relative;
 }
-.route-row:hover { background: #f5f5f7; }
-.route-row.active-route { background: var(--blue-light); }
+.route-row:hover {
+  background: #f5f5f7;
+}
+.route-row.active-route {
+  background: var(--blue-light);
+}
 
 .swatch {
   display: inline-block;
-  width: 14px; height: 14px;
+  width: 14px;
+  height: 14px;
   border-radius: 4px;
   flex-shrink: 0;
 }
@@ -367,36 +399,44 @@ LEGEND (inside left panel)
 
 .legend-swatch {
   display: inline-block;
-  width: 14px; height: 14px;
+  width: 14px;
+  height: 14px;
   border-radius: 4px;
   flex-shrink: 0;
 }
 
 .legend-circle {
   display: inline-block;
-  width: 10px; height: 10px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .legend-line {
   display: inline-block;
-  width: 20px; height: 3px;
+  width: 20px;
+  height: 3px;
   border-radius: 2px;
   flex-shrink: 0;
 }
 
 /* Police station toggle */
-.legend-toggle-row { gap: 8px; }
+.legend-toggle-row {
+  gap: 8px;
+}
 
 .layer-toggle {
   position: relative;
   display: inline-block;
-  width: 30px; height: 18px;
+  width: 30px;
+  height: 18px;
   flex-shrink: 0;
 }
 .layer-toggle input {
-  opacity: 0; width: 0; height: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
   position: absolute;
 }
 .toggle-track {
@@ -410,15 +450,21 @@ LEGEND (inside left panel)
 .toggle-track::after {
   content: "";
   position: absolute;
-  width: 14px; height: 14px;
+  width: 14px;
+  height: 14px;
   background: white;
   border-radius: 50%;
-  top: 2px; left: 2px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  top: 2px;
+  left: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s;
 }
-.layer-toggle input:checked + .toggle-track { background: var(--blue); }
-.layer-toggle input:checked + .toggle-track::after { transform: translateX(12px); }
+.layer-toggle input:checked + .toggle-track {
+  background: var(--blue);
+}
+.layer-toggle input:checked + .toggle-track::after {
+  transform: translateX(12px);
+}
 
 /*--------------------------------------------------------------------
 RISK FILTER (slider + dropdown)
@@ -475,7 +521,7 @@ RISK FILTER (slider + dropdown)
 .risk-dropdown:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 2px rgba(66,204,197,0.2);
+  box-shadow: 0 0 0 2px rgba(66, 204, 197, 0.2);
 }
 
 /* custom arrow */
@@ -497,7 +543,7 @@ HOVER TOOLTIP
 #hover-tooltip {
   display: none;
   position: fixed;
-  background: rgba(255,255,255,0.96);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 11px 14px;
@@ -508,7 +554,7 @@ HOVER TOOLTIP
   pointer-events: none;
   z-index: 1000;
   max-width: 200px;
-  border-left: 3px solid #8B1E21;
+  border-left: 3px solid #8b1e21;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
 
@@ -554,7 +600,7 @@ HOVER TOOLTIP
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 9999;
@@ -567,15 +613,23 @@ HOVER TOOLTIP
   padding: 36px 40px 28px;
   max-width: 420px;
   width: 90%;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
   text-align: center;
-  animation: welcome-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  animation: welcome-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 @keyframes welcome-in {
-  from { opacity: 0; transform: scale(0.88) translateY(20px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
-#welcome-logo-row { margin-bottom: 16px; }
+#welcome-logo-row {
+  margin-bottom: 16px;
+}
 #welcome-logo {
   height: 160px;
   width: auto;
@@ -609,12 +663,16 @@ HOVER TOOLTIP
   flex-direction: column;
   gap: 4px;
 }
-#welcome-sources li { font-size: 12px; }
+#welcome-sources li {
+  font-size: 12px;
+}
 #welcome-sources a {
   color: #007aff;
   text-decoration: none;
 }
-#welcome-sources a:hover { text-decoration: underline; }
+#welcome-sources a:hover {
+  text-decoration: underline;
+}
 #welcome-steps {
   text-align: left;
   padding: 0;
@@ -654,7 +712,9 @@ HOVER TOOLTIP
   transition: background 0.2s;
   margin-bottom: 14px;
 }
-#welcome-btn:hover { background: #333; }
+#welcome-btn:hover {
+  background: #333;
+}
 #welcome-skip {
   display: flex;
   align-items: center;
@@ -664,7 +724,9 @@ HOVER TOOLTIP
   color: #aaa;
   cursor: pointer;
 }
-#welcome-skip input { cursor: pointer; }
+#welcome-skip input {
+  cursor: pointer;
+}
 
 #loading-modal {
   position: fixed;
@@ -672,7 +734,7 @@ HOVER TOOLTIP
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   display: none;
   align-items: center;
   justify-content: center;
@@ -684,7 +746,7 @@ HOVER TOOLTIP
   padding: 30px 40px;
   border-radius: 12px;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   font-size: 16px;
 }
 
@@ -699,9 +761,10 @@ HOVER TOOLTIP
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
 
 /*--------------------------------------------------------------------
 RECENT SEARCHES DROPDOWN
@@ -710,7 +773,7 @@ RECENT SEARCHES DROPDOWN
 #recent-dropdown {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 }
@@ -758,7 +821,9 @@ COLLAPSIBLE SECTIONS
   margin-bottom: 0;
 }
 
-.collapsible-header:hover { color: var(--blue); }
+.collapsible-header:hover {
+  color: var(--blue);
+}
 
 .collapse-arrow {
   font-size: 12px;
