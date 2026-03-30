@@ -26,8 +26,12 @@
   </head>
 
   <body>
+    <!-- ──────────────────────────────────────────────────────────────────
+         LEFT SIDEBAR (Controls Panel)
+         Contains: search inputs, landmarks, crime risk filter, year range, map layers
+         ────────────────────────────────────────────────────────────────── -->
     <div id="controls">
-      <!-- Search card -->
+      <!-- Search card: origin + destination inputs with GPS and swap buttons -->
       <div id="search-card">
         <div id="search-icons">
           <span id="icon-circle"></span>
@@ -45,7 +49,7 @@
         </div>
       </div>
 
-      <!-- Popular destinations -->
+      <!-- Popular destinations: Quick-access landmark buttons for common Toronto locations -->
       <div class="panel-card">
         <div class="section-label collapsible-header" id="landmarks-toggle">
           POPULAR DESTINATIONS <span class="collapse-arrow">▾</span>
@@ -78,7 +82,10 @@
         </div>
       </div>
 
-      <!-- ── Crime Risk Legend ── -->
+      <!-- Crime Risk Legend + Filtering Controls
+           - Visual legend for the four crime severity levels (Low/Moderate/High/Danger)
+           - Dropdown to filter visible neighbourhoods by risk (all, low, moderate, high, danger)
+           - Year range slider to adjust the historical incident data included in route calculations -->
       <div class="panel-card" id="legend-section">
         <div class="section-label">CRIME RISK LEVEL</div>
         <div class="legend-row">
@@ -136,7 +143,11 @@
         </div>
       </div>
 
-      <!-- ── Map Layers ── -->
+      <!-- Map Layers Control Panel
+           Toggles for optional overlays:
+           - Police stations: blue dots on map
+           - TTC Subway Lines: colour-coded by line with legend
+           - Route legend: shows fastest (cyan) and safest (green) route colours -->
       <div class="panel-card" id="layers-section">
         <div class="section-label collapsible-header" id="layers-toggle">
           MAP LAYERS <span class="collapse-arrow">▾</span>
@@ -190,7 +201,11 @@
       </div>
     </div>
 
-    <!-- ── Right-side Route Comparison Panel ── -->
+    <!-- ──────────────────────────────────────────────────────────────────
+         RIGHT SIDEBAR (Route Comparison Panel)
+         Displayed when routes are calculated; shows fastest vs safest options,
+         travel time, and safety comparison metric.
+         ────────────────────────────────────────────────────────────────── -->
     <div id="route-panel" style="display: none">
       <div id="status" style="display: none"></div>
       <div id="safety-warning" style="display: none">
@@ -231,7 +246,10 @@
       </div>
     </div>
 
-    <!-- Hover tooltip -->
+    <!-- Neighbourhood Hover Tooltip
+         Displays when user hovers over a neighbourhood polygon:
+         - Neighbourhood name, risk level (color-coded), description
+         - Comparison of neighbourhood crime rate vs city average (%) -->
     <div id="hover-tooltip">
       <div id="hover-name"></div>
       <div id="hover-level"></div>
@@ -239,7 +257,11 @@
       <div id="hover-compare"></div>
     </div>
 
-    <!-- Onboarding welcome modal -->
+    <!-- Onboarding Welcome Modal
+         First-time user introduction with:
+         - App tagline and four-step usage guide
+         - Data source attribution (TPS, City of Toronto)
+         - Option to dismiss and not show again (stored in localStorage) -->
     <div id="welcome-modal">
       <div id="welcome-box">
         <div id="welcome-logo-row">
@@ -320,7 +342,8 @@
       </div>
     </div>
 
-    <!-- Loading modal -->
+    <!-- Loading/Status Modal
+         Displays loading spinner and custom messages while routes are being calculated -->
     <div id="loading-modal">
       <div class="loading-box">
         <div class="spinner"></div>
@@ -328,6 +351,7 @@
       </div>
     </div>
 
+    <!-- Mapbox Map Container: The main interactive map where routes, crime data, and POIs are rendered -->
     <div id="map" class="map"></div>
 
     <script src="script.js"></script>
