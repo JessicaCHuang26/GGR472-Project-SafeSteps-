@@ -1,7 +1,12 @@
 /*--------------------------------------------------------------------
 APPLE MINIMAL — VARIABLES
---------------------------------------------------------------------*/
 
+Global CSS variables used across the UI.
+These define the color palette, shadows, spacing, and radii so the
+entire interface maintains a consistent Apple-style design language.
+
+Changing values here updates the entire UI theme.
+--------------------------------------------------------------------*/
 :root {
   --nav-h: 0px;
   --blue: #007aff;
@@ -20,8 +25,11 @@ APPLE MINIMAL — VARIABLES
 
 /*--------------------------------------------------------------------
 MAP
---------------------------------------------------------------------*/
 
+Full-screen map container.
+Positioned absolutely so the map fills the entire viewport except
+for the navigation bar height.
+--------------------------------------------------------------------*/
 .map {
   position: absolute;
   top: var(--nav-h);
@@ -33,8 +41,13 @@ MAP
 
 /*--------------------------------------------------------------------
 CONTROLS — left panel
---------------------------------------------------------------------*/
 
+Main control panel that contains search, filters, landmarks,
+legend, and risk settings.
+
+Positioned on the left side of the map and scrollable when
+content exceeds screen height.
+--------------------------------------------------------------------*/
 #controls {
   position: absolute;
   top: calc(var(--nav-h) + 12px);
@@ -51,7 +64,10 @@ CONTROLS — left panel
   display: none;
 }
 
-/* Shared card */
+/* Shared card style used for most UI panels such as
+   filters, legends, search sections, etc.
+
+Creates the frosted glass Apple-like interface effect. */
 .panel-card {
   background: var(--bg);
   backdrop-filter: blur(20px);
@@ -63,6 +79,7 @@ CONTROLS — left panel
   margin-top: 8px;
 }
 
+/* Section label */
 .section-label {
   font-size: 10px;
   font-weight: 700;
@@ -72,14 +89,21 @@ CONTROLS — left panel
   margin-bottom: 10px;
 }
 
+/* Divider between sections */
 .panel-divider {
   border: none;
   border-top: 1px solid var(--separator);
   margin: 10px 0;
 }
 
-/*-- Search card --*/
+/*--------------------------------------------------------------------
+Search card
 
+Container that holds the start and end location inputs
+(Mapbox geocoder instances).
+
+Includes visual indicators, input fields, and route controls.
+--------------------------------------------------------------------*/
 #search-card {
   background: var(--bg);
   backdrop-filter: blur(20px);
@@ -96,6 +120,7 @@ CONTROLS — left panel
   overflow: visible;
 }
 
+/* Icons column: vertical stack of visual indicators for start/middle/end */
 #search-icons {
   display: flex;
   flex-direction: column;
@@ -105,6 +130,7 @@ CONTROLS — left panel
   padding: 4px 0;
 }
 
+/* Simple circle for start point, pin for end point, and dots for waypoints */
 #icon-circle {
   width: 10px;
   height: 10px;
@@ -113,6 +139,7 @@ CONTROLS — left panel
   display: block;
 }
 
+/* Dots for waypoints: using text with letter-spacing to create evenly spaced dots that scale well */
 #icon-dots {
   font-size: 13px;
   color: var(--tertiary);
@@ -120,12 +147,14 @@ CONTROLS — left panel
   letter-spacing: -1px;
 }
 
+/* Pin for end point: using text to allow for easy color and size adjustments while maintaining sharpness */
 #icon-pin {
   font-size: 13px;
   color: var(--red);
   line-height: 1;
 }
 
+/* Inputs column: contains the Mapbox geocoder inputs for start and end locations, stacked vertically */
 #search-inputs {
   flex: 1;
   min-width: 0;
@@ -140,6 +169,7 @@ CONTROLS — left panel
   z-index: 1;
 }
 
+/* Custom styles to better integrate Mapbox geocoder into our design, and to fix z-index issues with the suggestions dropdown */
 #geocoder-start .mapboxgl-ctrl-geocoder,
 #geocoder-end .mapboxgl-ctrl-geocoder {
   min-width: 0;
@@ -183,7 +213,6 @@ CONTROLS — left panel
 }
 
 /*-- GPS + Swap buttons --*/
-
 #search-btns {
   display: flex;
   flex-direction: column;
@@ -212,8 +241,7 @@ CONTROLS — left panel
   background: #d0e4ff;
 }
 
-/*-- Landmarks --*/
-
+/*-- Landmarks section --*/
 #landmarks-grid {
   display: flex;
   flex-wrap: wrap;
@@ -241,8 +269,14 @@ CONTROLS — left panel
   color: white;
 }
 
-/*-- Route Panel (right side) --*/
+/*--------------------------------------------------------------------
+Route Panel
 
+Floating panel on the right side of the screen that displays
+available route options and travel information.
+
+Includes route toggles and route details.
+--------------------------------------------------------------------*/
 #route-panel {
   position: fixed;
   top: calc(var(--nav-h) + 16px);
@@ -255,7 +289,6 @@ CONTROLS — left panel
 }
 
 /*-- Route toggle --*/
-
 #route-toggle {
   display: flex;
   background: var(--bg);
@@ -296,7 +329,6 @@ CONTROLS — left panel
 }
 
 /*-- Safety warning --*/
-
 #safety-warning {
   background: #fff4e5;
   border: 1px solid #ffd58a;
@@ -310,7 +342,6 @@ CONTROLS — left panel
 }
 
 /*-- Status --*/
-
 #status {
   background: #f2f2f7;
   border: 1px solid var(--separator);
@@ -323,7 +354,6 @@ CONTROLS — left panel
 }
 
 /*-- Route info --*/
-
 #info {
   background: var(--bg);
   backdrop-filter: blur(20px);
@@ -389,12 +419,9 @@ CONTROLS — left panel
   width: 100%;
 }
 
-/*-- Markers (SVG pins, styled inline) --*/
-
 /*--------------------------------------------------------------------
 LEGEND (inside left panel)
 --------------------------------------------------------------------*/
-
 .legend-row {
   display: flex;
   align-items: center;
@@ -429,7 +456,7 @@ LEGEND (inside left panel)
   flex-shrink: 0;
 }
 
-/* Police station toggle */
+/* Police station and subway toggle */
 .legend-toggle-row {
   gap: 8px;
 }
@@ -477,7 +504,6 @@ LEGEND (inside left panel)
 /*--------------------------------------------------------------------
 RISK FILTER (slider + dropdown)
 --------------------------------------------------------------------*/
-
 .risk-slider {
   width: 100%;
   margin: 4px 0 2px;
@@ -503,7 +529,6 @@ RISK FILTER (slider + dropdown)
 }
 
 /* RISK FILTER DROPDOWN */
-
 .dropdown-wrapper {
   position: relative;
   margin-top: 8px;
@@ -521,7 +546,6 @@ RISK FILTER (slider + dropdown)
   transition: all 0.2s ease;
 }
 
-/* subtle shadow + cleaner look */
 .risk-dropdown:hover {
   border-color: #a0a0a0;
 }
@@ -532,7 +556,7 @@ RISK FILTER (slider + dropdown)
   box-shadow: 0 0 0 2px rgba(66, 204, 197, 0.2);
 }
 
-/* custom arrow */
+/* custom arrow for dropdown */
 .dropdown-wrapper::after {
   content: "▼";
   position: absolute;
@@ -547,7 +571,6 @@ RISK FILTER (slider + dropdown)
 /*--------------------------------------------------------------------
 HOVER TOOLTIP
 --------------------------------------------------------------------*/
-
 #hover-tooltip {
   display: none;
   position: fixed;
@@ -601,9 +624,11 @@ HOVER TOOLTIP
   margin-top: 2px;
 }
 
-/* LOADING MODAL */
-
-/* ── Welcome onboarding modal ─────────────────────────────── */
+/*--------------------------------------------------------------------
+WELCOME MODAL
+Full-screen modal that appears on first visit to introduce the app.
+Includes app logo, description, data sources, and quick start steps.  
+--------------------------------------------------------------------*/
 #welcome-modal {
   display: none;
   position: fixed;
@@ -736,6 +761,10 @@ HOVER TOOLTIP
   cursor: pointer;
 }
 
+/*--------------------------------------------------------------------
+LOADING MODAL
+Full-screen modal with spinner that appears during route calculation or data loading.
+--------------------------------------------------------------------*/
 #loading-modal {
   position: fixed;
   top: 0;
@@ -777,7 +806,6 @@ HOVER TOOLTIP
 /*--------------------------------------------------------------------
 RECENT SEARCHES DROPDOWN
 --------------------------------------------------------------------*/
-
 #recent-dropdown {
   background: #fff;
   border-radius: 12px;
@@ -819,7 +847,6 @@ RECENT SEARCHES DROPDOWN
 /*--------------------------------------------------------------------
 COLLAPSIBLE SECTIONS
 --------------------------------------------------------------------*/
-
 .collapsible-header {
   cursor: pointer;
   user-select: none;
