@@ -66,11 +66,35 @@ geolocate.on("geolocate", (e) => {
   getRoute();
 });
 
+// ------------------------------------------------------------------
+// Global data state
+// - incidentsData: loaded full incident dataset (all years)
+// - filteredIncidentsData: subset for currently selected year
+// - neighbourhoodData: crime rates for neighbourhood boundaries
+// - cityAvgRate: computed from neighbourhood dataset (for tooltip comparison)
+// - selectedYear: year selected by slider (default 2022)
+//
+// These variables are used across routing + layer rendering logic.
+// ------------------------------------------------------------------
 let incidentsData = null;
 let filteredIncidentsData = null;
 let neighbourhoodData = null;
 let cityAvgRate = 700;
 let selectedYear = 2022;
+
+// Shared style calculation for neighbourhood crime rate; one source-of-truth
+const CRIME_RATE_EXPR = [
+  "+",
+  ["coalesce", ["get", "ASSAULT_RATE_2022"], 0],
+  ["coalesce", ["get", "ROBBERY_RATE_2022"], 0],
+  ["coalesce", ["get", "SHOOTING_RATE_2022"], 0],
+  ["coalesce", ["get", "HOMICIDE_RATE_2022"], 0],
+];
+
+function setLayerVisibility(layerId, isVisible) {
+  if (!map.getLayer(layerId)) return;
+  map.setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
+}
 
 /*--------------------------------------------------------------------
 WAIT FOR MAP + DATA BEFORE ADDING LAYERS
@@ -117,7 +141,10 @@ const neighbourhoodReady = fetch(
 Promise.all([mapReady, incidentsReady, neighbourhoodReady]).then(initLayers);
 
 /*--------------------------------------------------------------------
-INIT LAYERS  (safe to call again after style switch)
+INIT LAYERS (safe to call again after style switch)
+  - Add neighbourhood crime choropleth with hover tooltips
+  - Add police station points and subway lines layers
+  - Keep each map source/layer addition idempotent (guard map.getSource/map.getLayer)
 --------------------------------------------------------------------*/
 
 function initLayers() {
@@ -130,15 +157,6 @@ function initLayers() {
       generateId: true, // required for featureState hover
     });
   }
-
-  // Helpers for rate expression (reused in both hover and normal paint)
-  const rateExpr = [
-    "+",
-    ["coalesce", ["get", "ASSAULT_RATE_2022"], 0],
-    ["coalesce", ["get", "ROBBERY_RATE_2022"], 0],
-    ["coalesce", ["get", "SHOOTING_RATE_2022"], 0],
-    ["coalesce", ["get", "HOMICIDE_RATE_2022"], 0],
-  ];
 
   if (!map.getLayer("neighbourhood_crime")) {
     map.addLayer({
@@ -154,7 +172,7 @@ function initLayers() {
           [
             "interpolate",
             ["linear"],
-            rateExpr,
+            CRIME_RATE_EXPR,
             200,
             "#FFE566",
             415,
@@ -172,7 +190,7 @@ function initLayers() {
           [
             "interpolate",
             ["linear"],
-            rateExpr,
+            CRIME_RATE_EXPR,
             200,
             "#FFFDE7",
             415,
@@ -517,18 +535,18 @@ function showRecentDropdown(inputEl, onSelect) {
       )
       .join("");
 
-  // Position below the input
+  // Position below the input, but below Mapbox suggestions (z-index 9999) so the two lists do not overlap messily.
   const rect = inputEl.getBoundingClientRect();
   drop.style.cssText = `
     position:fixed;top:${rect.bottom + 4}px;left:${rect.left}px;
-    width:${rect.width}px;z-index:9999;
+    width:${rect.width}px;z-index:9000;
   `;
 
   drop.querySelectorAll(".recent-item").forEach((el) => {
     el.addEventListener("mousedown", (e) => {
       e.preventDefault();
       const item = list[parseInt(el.dataset.i)];
-      inputEl.value = item.name;
+      inputEl.value = item.name.trim();
       onSelect(item.name, item.coords);
       removeRecentDropdown();
     });
@@ -548,6 +566,13 @@ function attachRecentSearch(geocoderId, onSelect) {
     const input = document.querySelector(`#${geocoderId} input`);
     if (!input) return;
     input.addEventListener("focus", () => showRecentDropdown(input, onSelect));
+    input.addEventListener("input", () => {
+      // Keep recent history visible while input is empty; close once user starts typing.
+      // This avoids premature hide due to Mapbox internal updates.
+      if (input.value.trim() !== "") {
+        removeRecentDropdown();
+      }
+    });
     input.addEventListener("blur", () => setTimeout(removeRecentDropdown, 150));
   }, 500);
 }
@@ -605,7 +630,7 @@ document.querySelectorAll(".landmark-btn").forEach((btn) => {
     endCoords = [parseFloat(btn.dataset.lng), parseFloat(btn.dataset.lat)];
     endMarker.setLngLat(endCoords).addTo(map);
     const input = document.querySelector("#geocoder-end input");
-    if (input) input.value = btn.textContent;
+    if (input) input.value = btn.textContent.trim();
     map.flyTo({ center: endCoords, zoom: Math.max(map.getZoom(), 14) });
     getRoute();
   });
@@ -616,13 +641,7 @@ POLICE STATION TOGGLE
 --------------------------------------------------------------------*/
 
 document.getElementById("police-toggle").addEventListener("change", (e) => {
-  if (map.getLayer("police_stations")) {
-    map.setLayoutProperty(
-      "police_stations",
-      "visibility",
-      e.target.checked ? "visible" : "none",
-    );
-  }
+  setLayerVisibility("police_stations", e.target.checked);
 });
 
 /*--------------------------------------------------------------------
@@ -630,13 +649,8 @@ SUBWAY TOGGLE
 --------------------------------------------------------------------*/
 
 document.getElementById("subway-toggle").addEventListener("change", (e) => {
-  if (map.getLayer("subway_lines")) {
-    map.setLayoutProperty(
-      "subway_lines",
-      "visibility",
-      e.target.checked ? "visible" : "none",
-    );
-  }
+  setLayerVisibility("subway_lines", e.target.checked);
+  setLayerVisibility("subway_lines_casing", e.target.checked);
 });
 
 /*--------------------------------------------------------------------
@@ -663,10 +677,8 @@ function applyRouteMode() {
       (label === "safest" && routeMode === "fastest")
         ? "none"
         : "visible";
-    if (map.getLayer("route-" + label))
-      map.setLayoutProperty("route-" + label, "visibility", vis);
-    if (map.getLayer("route-" + label + "-glow"))
-      map.setLayoutProperty("route-" + label + "-glow", "visibility", vis);
+    setLayerVisibility("route-" + label, vis === "visible");
+    setLayerVisibility("route-" + label + "-glow", vis === "visible");
   });
   const fastestRow = document.getElementById("fastest-row");
   const safestRow = document.getElementById("safest-row");
@@ -732,7 +744,7 @@ setTimeout(() => {
 }, 600);
 
 /*--------------------------------------------------------------------
-SWAP
+SWAP DESTINATION/ORIGIN
 --------------------------------------------------------------------*/
 
 document.getElementById("swap-btn").addEventListener("click", () => {
@@ -778,6 +790,10 @@ async function fetchWalkingRoute(coords) {
   return data.routes && data.routes[0] ? data.routes[0] : null;
 }
 
+// Compute normalized risk score for a route in incidents per km.
+// - Convert route geometry to a polygon buffer (50m) to capture nearby incidents
+// - Count incident weights inside buffered area
+// - Divide by route length in km to normalize across distances
 function routeRiskPerKm(route) {
   const geojson = { type: "Feature", geometry: route.geometry };
   const buffer = turf.buffer(geojson, 0.05, { units: "kilometers" });
@@ -799,6 +815,8 @@ function routeRiskPerKm(route) {
   return risk / (route.distance / 1000);
 }
 
+// Return combined risk rate for the neighbourhood containing the point.
+// This is used for route high-crime warning checks.
 function crimeRateAt(lon, lat) {
   if (!neighbourhoodData) return 0;
   const pt = turf.point([lon, lat]);
@@ -816,7 +834,8 @@ function crimeRateAt(lon, lat) {
   return 0;
 }
 
-// Returns true if the route passes through any neighbourhood with combined rate > 807 (High)
+// Returns true if the route passes through any neighbourhood classified as High risk.
+// This performs uniformly spaced sampling along route geometry to avoid expensive curve checks.
 function routePassesThroughHighCrime(route) {
   if (!neighbourhoodData) return false;
   const line = turf.lineString(route.geometry.coordinates);
@@ -858,24 +877,35 @@ function updateIncidentYear(year) {
     return;
   }
 
+  // Filter incidents for the selected year and onwards (e.g., 2023 includes 2023 + 2024)
   filteredIncidentsData = {
     type: "FeatureCollection",
     features: incidentsData.features.filter(
-      (f) => Number(f.properties.year) === selectedYear,
+      (f) => Number(f.properties.year) >= selectedYear,
     ),
   };
 
-  console.log(
-    `Year ${selectedYear}: ${filteredIncidentsData.features.length} incidents`,
-  );
+  // Update UI label to show year range
+  const yearValue = document.getElementById("year-value");
+  if (yearValue) {
+    yearValue.textContent = `${selectedYear} to 2024`;
+  }
 
-  console.log("Year:", year, "Count:", filteredIncidentsData.features.length);
+  console.log(
+    `Year range ${selectedYear}-2024: ${filteredIncidentsData.features.length} incidents`,
+  );
 }
 
 function getIncidentDataForCurrentYear() {
   return filteredIncidentsData || incidentsData;
 }
 
+// Main route resolution pipeline triggered when user selects both origin and destination.
+// Steps:
+// 1) fetch direct and additional waypoint-routed alternatives
+// 2) choose fastest and safest candidate within 40% time buffer
+// 3) render route lines and UI summary
+// 4) apply safety flag for high-crime neighbourhoods
 async function getRoute() {
   if (!startCoords || !endCoords) return;
 
@@ -979,6 +1009,8 @@ async function getRoute() {
   map.fitBounds(bounds, { padding: 80 });
 }
 
+// Add route display layers for a given route direction (fastest/safest).
+// Renders both a glow underlay and a crisp main path.
 function addRouteLayer(label, geometry, color) {
   map.addSource("route-" + label, {
     type: "geojson",
@@ -1006,6 +1038,7 @@ function addRouteLayer(label, geometry, color) {
   });
 }
 
+// Show or hide the loading / status overlay in the UI.
 function setStatus(msg) {
   const modal = document.getElementById("loading-modal");
   const text = document.getElementById("loading-text");
@@ -1024,7 +1057,6 @@ const yearValue = document.getElementById("year-value");
 if (yearSlider && yearValue) {
   yearSlider.addEventListener("input", (e) => {
     const year = Number(e.target.value);
-    yearValue.textContent = year;
 
     updateIncidentYear(year);
 
@@ -1035,7 +1067,7 @@ if (yearSlider && yearValue) {
 }
 
 /*--------------------------------------------------------------------
-RISK LEVEL SLIDER
+RISK LEVEL DROPDOWN
 --------------------------------------------------------------------*/
 
 const RISK_THRESHOLDS = [0, 595, 807, 1008];
@@ -1046,13 +1078,7 @@ const RISK_LABEL_KEYS = [
   "showingDanger",
 ];
 
-const rateFilterExpr = [
-  "+",
-  ["coalesce", ["get", "ASSAULT_RATE_2022"], 0],
-  ["coalesce", ["get", "ROBBERY_RATE_2022"], 0],
-  ["coalesce", ["get", "SHOOTING_RATE_2022"], 0],
-  ["coalesce", ["get", "HOMICIDE_RATE_2022"], 0],
-];
+const rateFilterExpr = CRIME_RATE_EXPR;
 
 document.getElementById("risk-filter").addEventListener("change", (e) => {
   const value = e.target.value;
