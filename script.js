@@ -1,7 +1,6 @@
 /*--------------------------------------------------------------------
 STRINGS
 --------------------------------------------------------------------*/
-
 const STRINGS = {
   startPlaceholder: "Enter start location",
   endPlaceholder: "Enter destination",
@@ -30,7 +29,6 @@ function t(key) {
 /*--------------------------------------------------------------------
 INITIALIZE MAP
 --------------------------------------------------------------------*/
-
 mapboxgl.accessToken =
   "pk.eyJ1IjoiamVzc2ljYWh1YW5nIiwiYSI6ImNtazNjNmdmeTBkN3AzZnEyZHRscHdod28ifQ.Pa9LhzBk1H75KBMwBngDjA";
 
@@ -99,9 +97,9 @@ function setLayerVisibility(layerId, isVisible) {
 /*--------------------------------------------------------------------
 WAIT FOR MAP + DATA BEFORE ADDING LAYERS
 --------------------------------------------------------------------*/
-
 const mapReady = new Promise((resolve) => map.on("load", resolve));
 
+// Load incident data and filter by selected year
 const incidentsReady = fetch(
   "https://jessicachuang26.github.io/GGR472-Project-SafeSteps-/data/cleaned/toronto_incidents_by_year.geojson",
 )
@@ -119,6 +117,7 @@ const incidentsReady = fetch(
     setStatus("Incident data failed to load.");
   });
 
+// Load neighbourhood crime rates
 const neighbourhoodReady = fetch(
   "https://jessicachuang26.github.io/GGR472-Project-SafeSteps-/Neighbourhood_Crime_Rates.geojson",
 )
@@ -146,7 +145,6 @@ INIT LAYERS (safe to call again after style switch)
   - Add police station points and subway lines layers
   - Keep each map source/layer addition idempotent (guard map.getSource/map.getLayer)
 --------------------------------------------------------------------*/
-
 function initLayers() {
   /*-- NEIGHBOURHOOD CRIME CHOROPLETH --*/
 
@@ -244,6 +242,7 @@ function initLayers() {
       low: { label: "Low Risk", bg: "#F9A825", desc: "Relatively safe area" },
     };
 
+    // Mouse move: set hover state + update tooltip content & position
     map.on("mousemove", "neighbourhood_crime", (e) => {
       map.getCanvas().style.cursor = "pointer";
       if (!e.features.length) return;
@@ -261,7 +260,7 @@ function initLayers() {
         { hover: true },
       );
 
-      // Build tourist-friendly tooltip
+      // Determine risk tier based on combined crime rate, and comparison to city average
       const p = feat.properties;
       const rate = Math.round(
         (p.ASSAULT_RATE_2022 || 0) +
@@ -301,6 +300,7 @@ function initLayers() {
       document.getElementById("hover-compare").textContent = compare;
 
       // Position near cursor, flip left if near right edge
+      // Use originalEvent to get correct coordinates relative to map container
       const x = e.originalEvent.clientX;
       const y = e.originalEvent.clientY;
       const offX = x > window.innerWidth - 230 ? -215 : 15;
@@ -309,6 +309,7 @@ function initLayers() {
       tooltip.style.display = "block";
     });
 
+    // Mouse leave: reset hover state + hide tooltip
     map.on("mouseleave", "neighbourhood_crime", () => {
       map.getCanvas().style.cursor = "";
       if (hoveredId !== null) {
@@ -323,7 +324,6 @@ function initLayers() {
   }
 
   /*-- POLICE STATIONS --*/
-
   if (!map.getSource("police_stations")) {
     map.addSource("police_stations", {
       type: "geojson",
@@ -331,6 +331,7 @@ function initLayers() {
     });
   }
 
+  // Circle layer with white stroke for better visibility
   if (!map.getLayer("police_stations")) {
     map.addLayer({
       id: "police_stations",
@@ -345,6 +346,7 @@ function initLayers() {
       },
     });
 
+    // Popup on hover
     const policePopup = new mapboxgl.Popup({
       closeButton: false,
       closeOnClick: false,
@@ -367,7 +369,6 @@ function initLayers() {
   /*--------------------------------------------------------------------
   TTC SUBWAY LINES
   --------------------------------------------------------------------*/
-
   if (!map.getSource("subway_lines")) {
     map.addSource("subway_lines", {
       type: "geojson",
@@ -375,6 +376,7 @@ function initLayers() {
     });
   }
 
+  // Two layers: thicker white casing underneath, then coloured line on top (for better visibility on map)
   if (!map.getLayer("subway_lines_casing")) {
     map.addLayer({
       id: "subway_lines_casing",
@@ -389,6 +391,7 @@ function initLayers() {
     });
   }
 
+  // Colour lines by route using match expression, default to yellow if route name is missing/unrecognized
   if (!map.getLayer("subway_lines")) {
     const lineColorExpr = [
       "match",
@@ -416,10 +419,7 @@ function initLayers() {
     });
   }
 
-  /*--------------------------------------------------------------------
-  SUBWAY POPUP
-  --------------------------------------------------------------------*/
-
+  // Popup on hover showing line name
   const subwayPopup = new mapboxgl.Popup({
     closeButton: false,
     closeOnClick: false,
@@ -445,7 +445,6 @@ function initLayers() {
 /*--------------------------------------------------------------------
 GEOCODER
 --------------------------------------------------------------------*/
-
 let startCoords = null;
 let endCoords = null;
 
@@ -485,6 +484,7 @@ function makePinEl(color, label) {
   return el;
 }
 
+// Green pin for start, red pin for end; anchored at bottom so tip points to location
 const startMarker = new mapboxgl.Marker({
   element: makePinEl("#34a853", ""),
   anchor: "bottom",
@@ -497,10 +497,10 @@ const endMarker = new mapboxgl.Marker({
 /*--------------------------------------------------------------------
 RECENT SEARCHES
 --------------------------------------------------------------------*/
-
 const RECENT_KEY = "safesteps_recent";
 const RECENT_MAX = 5;
 
+// Get recent searches from localStorage, or return empty array if not available/corrupted
 function getRecentSearches() {
   try {
     return JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
@@ -509,6 +509,7 @@ function getRecentSearches() {
   }
 }
 
+// Save a recent search to localStorage, keeping most recent RECENT_MAX entries
 function saveRecentSearch(name, coords) {
   if (!name || name === t("myLocation")) return;
   let list = getRecentSearches().filter((r) => r.name !== name);
@@ -517,6 +518,7 @@ function saveRecentSearch(name, coords) {
   localStorage.setItem(RECENT_KEY, JSON.stringify(list));
 }
 
+// Show dropdown of recent searches when input is focused, allowing user to quickly re-select a previous location
 function showRecentDropdown(inputEl, onSelect) {
   removeRecentDropdown();
   const list = getRecentSearches();
@@ -555,11 +557,13 @@ function showRecentDropdown(inputEl, onSelect) {
   document.body.appendChild(drop);
 }
 
+// Remove the recent searches dropdown if it exists
 function removeRecentDropdown() {
   const existing = document.getElementById("recent-dropdown");
   if (existing) existing.remove();
 }
 
+// Attach recent searches dropdown to a geocoder input, with callback for when a recent search is selected
 function attachRecentSearch(geocoderId, onSelect) {
   // Wait for geocoder to render its input
   setTimeout(() => {
@@ -577,6 +581,7 @@ function attachRecentSearch(geocoderId, onSelect) {
   }, 500);
 }
 
+// Initialize recent search dropdowns for both start and end geocoders
 attachRecentSearch("geocoder-start", (name, coords) => {
   startCoords = coords;
   startMarker.setLngLat(coords).addTo(map);
@@ -591,6 +596,7 @@ attachRecentSearch("geocoder-end", (name, coords) => {
   getRoute();
 });
 
+// When a geocoder result is selected, save it to recent searches and update the corresponding marker and route
 startGeocoder.on("result", (e) => {
   startCoords = e.result.center;
   saveRecentSearch(
@@ -616,7 +622,6 @@ endGeocoder.on("result", (e) => {
 /*--------------------------------------------------------------------
 GPS BUTTON (panel button kept for accessibility)
 --------------------------------------------------------------------*/
-
 document.getElementById("gps-btn").addEventListener("click", () => {
   geolocate.trigger();
 });
@@ -624,7 +629,6 @@ document.getElementById("gps-btn").addEventListener("click", () => {
 /*--------------------------------------------------------------------
 LANDMARKS
 --------------------------------------------------------------------*/
-
 document.querySelectorAll(".landmark-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     endCoords = [parseFloat(btn.dataset.lng), parseFloat(btn.dataset.lat)];
@@ -639,7 +643,6 @@ document.querySelectorAll(".landmark-btn").forEach((btn) => {
 /*--------------------------------------------------------------------
 POLICE STATION TOGGLE
 --------------------------------------------------------------------*/
-
 document.getElementById("police-toggle").addEventListener("change", (e) => {
   setLayerVisibility("police_stations", e.target.checked);
 });
@@ -647,7 +650,6 @@ document.getElementById("police-toggle").addEventListener("change", (e) => {
 /*--------------------------------------------------------------------
 SUBWAY TOGGLE
 --------------------------------------------------------------------*/
-
 document.getElementById("subway-toggle").addEventListener("change", (e) => {
   setLayerVisibility("subway_lines", e.target.checked);
   setLayerVisibility("subway_lines_casing", e.target.checked);
@@ -656,7 +658,6 @@ document.getElementById("subway-toggle").addEventListener("change", (e) => {
 /*--------------------------------------------------------------------
 ROUTE MODE TOGGLE
 --------------------------------------------------------------------*/
-
 let routeMode = "both";
 
 document.querySelectorAll(".toggle-btn").forEach((btn) => {
@@ -670,6 +671,7 @@ document.querySelectorAll(".toggle-btn").forEach((btn) => {
   });
 });
 
+// Show/hide routes based on selected routeMode, and update active state of route rows in panel
 function applyRouteMode() {
   ["fastest", "safest"].forEach((label) => {
     const vis =
@@ -712,7 +714,6 @@ document.getElementById("safest-row").addEventListener("click", () => {
 /*--------------------------------------------------------------------
 COLLAPSIBLE PANELS
 --------------------------------------------------------------------*/
-
 function initCollapsible(headerId, bodyId, openDisplay) {
   const header = document.getElementById(headerId);
   const body = document.getElementById(bodyId) || header?.nextElementSibling;
@@ -746,7 +747,6 @@ setTimeout(() => {
 /*--------------------------------------------------------------------
 SWAP DESTINATION/ORIGIN
 --------------------------------------------------------------------*/
-
 document.getElementById("swap-btn").addEventListener("click", () => {
   const tmpCoords = startCoords;
   startCoords = endCoords;
@@ -767,7 +767,6 @@ document.getElementById("swap-btn").addEventListener("click", () => {
 /*--------------------------------------------------------------------
 CLEAR ROUTES
 --------------------------------------------------------------------*/
-
 function clearRoutes() {
   ["fastest", "safest"].forEach((label) => {
     if (map.getLayer("route-" + label + "-glow"))
@@ -781,7 +780,6 @@ function clearRoutes() {
 /*--------------------------------------------------------------------
 ROUTING
 --------------------------------------------------------------------*/
-
 async function fetchWalkingRoute(coords) {
   const coordStr = coords.map((c) => c.join(",")).join(";");
   const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${coordStr}?overview=full&geometries=geojson&access_token=${mapboxgl.accessToken}`;
@@ -849,6 +847,8 @@ function routePassesThroughHighCrime(route) {
   return false;
 }
 
+// Generate candidate waypoint coordinates by offsetting from the midpoint of the direct route.
+// This simple approach provides a few alternative routes without needing to call the routing API multiple times with different waypoints.
 function generateWaypointCandidates() {
   const line = turf.lineString([startCoords, endCoords]);
   const totalDist = turf.length(line, { units: "kilometers" });
@@ -869,6 +869,7 @@ function generateWaypointCandidates() {
   ];
 }
 
+// Update the filtered incident dataset based on the selected year, and update the UI label to show the current year range.
 function updateIncidentYear(year) {
   selectedYear = Number(year);
 
@@ -896,6 +897,7 @@ function updateIncidentYear(year) {
   );
 }
 
+// Get the appropriate incident dataset to use for route scoring based on the selected year filter. If the filtered dataset is not ready, fall back to using the full dataset (this can happen briefly during initial load or if there's an issue with filtering).
 function getIncidentDataForCurrentYear() {
   return filteredIncidentsData || incidentsData;
 }
@@ -1051,6 +1053,7 @@ function setStatus(msg) {
   }
 }
 
+// Update the incident year filter and refresh routes when the year slider is changed.
 const yearSlider = document.getElementById("year-slider");
 const yearValue = document.getElementById("year-value");
 
@@ -1069,7 +1072,8 @@ if (yearSlider && yearValue) {
 /*--------------------------------------------------------------------
 RISK LEVEL DROPDOWN
 --------------------------------------------------------------------*/
-
+// Thresholds for crime rate (incidents per 100k) based on city-wide distribution and natural breaks in the data. 
+// These are used both for colouring the neighbourhoods layer and for filtering when a risk level is selected.
 const RISK_THRESHOLDS = [0, 595, 807, 1008];
 const RISK_LABEL_KEYS = [
   "showingAll",
@@ -1080,6 +1084,8 @@ const RISK_LABEL_KEYS = [
 
 const rateFilterExpr = CRIME_RATE_EXPR;
 
+// When the risk filter dropdown changes, update the neighbourhoods layer filter to show only areas that match the selected risk level. 
+// This allows users to quickly identify which parts of the city are low/moderate/high/danger based on crime rates.
 document.getElementById("risk-filter").addEventListener("change", (e) => {
   const value = e.target.value;
 
