@@ -1,10 +1,8 @@
 # SafeStep Toronto
 
-An interactive pedestrian safety map for Toronto, built for GGR472 at the University of Toronto. It helps users — especially tourists — navigate the city by comparing the fastest and safest walking routes based on real crime data.
+An interactive pedestrian safety map for Toronto, built for GGR472 at the University of Toronto. It helps users, especially tourists navigate the city by comparing the fastest and safest walking routes based on real crime data.
 
-**Live site:** https://jessicachuang26.github.io/GGR472-Project-SafeSteps-/
-
----
+**Live site**: https://jessicachuang26.github.io/GGR472-Project-SafeSteps-/
 
 ## Features
 
@@ -17,8 +15,6 @@ An interactive pedestrian safety map for Toronto, built for GGR472 at the Univer
 - **Police stations** — Toggle nearby police station locations on/off
 - **Recent searches** — Last 5 searched addresses are saved locally
 - **Welcome guide** — First-time onboarding modal with usage instructions
-
----
 
 ## Data Sources
 
@@ -36,7 +32,6 @@ An interactive pedestrian safety map for Toronto, built for GGR472 at the Univer
 
 All crime data covers the year 2022.
 
----
 
 ## How It Works
 
@@ -60,7 +55,6 @@ The total weight is divided by route length (km) to produce a **risk per km** sc
 3. All candidate routes are fetched in parallel
 4. The route with the lowest duration is labelled **Fastest**; the route with the lowest risk/km (within the time budget) is labelled **Safest**
 
----
 
 ## Tech Stack
 
@@ -69,7 +63,6 @@ The total weight is divided by route length (km) to produce a **risk per km** sc
 - [Mapbox Geocoder](https://github.com/mapbox/mapbox-gl-geocoder) — address search
 - Vanilla JavaScript, HTML, CSS — no frameworks
 
----
 
 ## Project Structure
 
@@ -87,8 +80,6 @@ The total weight is divided by route length (km) to produce a **risk per km** sc
     ├── ttc_stops.geojson
     └── Police Facility Locations - 4326.geojson
 ```
-
----
 
 ## Team
 
