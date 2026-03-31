@@ -61,7 +61,7 @@ The total weight is divided by route length (km) to produce a **risk per km** sc
 - [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/) — map rendering and routing
 - [Turf.js](https://turfjs.org/) — spatial analysis (buffering, point-in-polygon)
 - [Mapbox Geocoder](https://github.com/mapbox/mapbox-gl-geocoder) — address search
-- Vanilla JavaScript, HTML, CSS — no frameworks
+- JavaScript, HTML, CSS — frameworks
 
 
 ## Project Structure
