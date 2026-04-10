@@ -31,7 +31,7 @@ An interactive pedestrian safety map for Toronto, built for GGR472 at the Univer
 | Routing | Mapbox Directions API (walking profile) |
 | Basemap | Mapbox Streets v12 |
 
-All crime data covers the year 2022.
+All crime data covers the year 2022 and above.
 
 
 ## How It Works
