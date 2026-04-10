@@ -27,6 +27,7 @@ An interactive pedestrian safety map for Toronto, built for GGR472 at the Univer
 | Traffic collisions | [Toronto Police Service Open Data](https://data.tps.ca/datasets/bc4c72a793014a55a674984ef175a6f3_0/explore) |
 | Neighbourhood crime rates | [City of Toronto Open Data](https://open.toronto.ca/dataset/neighbourhood-crime-rates/) |
 | Police facility locations | [City of Toronto Open Data](https://open.toronto.ca/dataset/police-facility-locations/) |
+| Subway Lines | [City of Toronto Open Data](https://open.toronto.ca/dataset/ttc-subway-shapefiles/) |
 | Routing | Mapbox Directions API (walking profile) |
 | Basemap | Mapbox Streets v12 |
 
